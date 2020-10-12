@@ -1,0 +1,39 @@
+PODS:
+  - Realm (5.4.4):
+    - Realm/Headers (= 5.4.4)
+  - Realm/Headers (5.4.4)
+  - RealmSwift (5.4.4):
+    - Realm (= 5.4.4)
+  - SCLAlertView (0.8.1)
+  - SwiftyUtils (5.2.0)
+
+DEPENDENCIES:
+  - Realm
+  - RealmSwift
+  - SCLAlertView (from `https://github.com/vikmeup/SCLAlertView-Swift.git`)
+  - SwiftyUtils
+
+SPEC REPOS:
+  trunk:
+    - Realm
+    - RealmSwift
+    - SwiftyUtils
+
+EXTERNAL SOURCES:
+  SCLAlertView:
+    :git: https://github.com/vikmeup/SCLAlertView-Swift.git
+
+CHECKOUT OPTIONS:
+  SCLAlertView:
+    :commit: f08ec93c299a221210e59462c84c79410050e5b7
+    :git: https://github.com/vikmeup/SCLAlertView-Swift.git
+
+SPEC CHECKSUMS:
+  Realm: b845bf406e03b9c52a53e0de2394480288aa532a
+  RealmSwift: b524ff07e4e92a34f4aecbe6ed1a613979a08bb9
+  SCLAlertView: 776813fb1f62248965f37cb7edf4088ee6394460
+  SwiftyUtils: 4c99e810e769063dbd5d4e83b486961a5d470aeb
+
+PODFILE CHECKSUM: 20ed2b33bcea1c262a3bc96f13d53eae4dbde768
+
+COCOAPODS: 1.10.0.rc.1
