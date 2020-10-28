@@ -45,6 +45,19 @@ class DataManager {
     }
 
     func importFiles(urls: [URL], name: String) throws {
+        func urlToPages(url: URL) throws -> [PDFPage] {
+            if let document = PDFDocument(url: url) {
+                var pages = [PDFPage]()
+                pages.reserveCapacity(document.pageCount)
+                (0..<document.pageCount).forEach { pages.append(document.page(at: $0)!) }
+                return pages
+            } else if let image = UIImage(contentsOfFile: url.path),
+                      let page = PDFPage(image: image) {
+                return [page]
+            } else {
+                throw ImportError.unableToCreatePage
+            }
+        }
         let pages = try urls.flatMap(urlToPages(url:))
         var i = 0
         let document = PDFDocument()
