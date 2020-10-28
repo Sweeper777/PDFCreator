@@ -44,6 +44,17 @@ class DataManager {
         }
     }
 
+    func importFiles(urls: [URL], name: String) throws {
+        let pages = try urls.flatMap(urlToPages(url:))
+        var i = 0
+        let document = PDFDocument()
+        for page in pages {
+            document.insert(page, at: i)
+            i += 1
+        }
+        try importPDF(document: document, name: name)
+    }
+
 }
 
 enum ImportError : Error {
