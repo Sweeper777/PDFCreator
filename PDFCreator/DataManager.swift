@@ -31,3 +31,14 @@ class DataManager {
         return _shared!
     }
 }
+
+enum ImportError : Error {
+    case unableToCreatePage
+    case fileAlreadyExists
+}
+
+extension PDFFileObject {
+    var pdfDocument: PDFDocument? {
+        PDFDocument(url: DataManager.shared.baseURL.appendingPathComponent(fileName).appendingPathExtension("pdf"))
+    }
+}
