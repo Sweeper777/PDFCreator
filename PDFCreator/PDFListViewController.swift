@@ -22,5 +22,11 @@ class PDFListViewController: UITableViewController {
         cell.textLabel?.text = pdfs[indexPath.row].fileName
         return cell
     }
+
+    @IBAction func newTapped() {
+    }
+
+    @IBAction func importTapped() {
+    }
 }
 
