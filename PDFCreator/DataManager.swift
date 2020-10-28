@@ -68,6 +68,19 @@ class DataManager {
         try importPDF(document: document, name: name)
     }
 
+    func importFile(url: URL) throws {
+        let pdf: PDFDocument
+        if let document = PDFDocument(url: url) {
+            pdf = document
+        } else if let image = UIImage(contentsOfFile: url.path),
+            let page = PDFPage(image: image) {
+            pdf = PDFDocument()
+            pdf.insert(page, at: 0)
+        } else {
+            throw ImportError.unableToCreatePage
+        }
+        try importPDF(document: pdf, name: url.deletingPathExtension().lastPathComponent)
+    }
 }
 
 enum ImportError : Error {
