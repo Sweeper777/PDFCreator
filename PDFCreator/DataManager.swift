@@ -30,6 +30,20 @@ class DataManager {
         _shared = _shared ?? DataManager()
         return _shared!
     }
+
+    func importPDF(document: PDFDocument, name: String) throws {
+        let existingFiles = pdfs.filter("fileName == %@", name)
+        if existingFiles.count > 0 {
+            throw ImportError.fileAlreadyExists
+        }
+        try realm.write {
+            let pdfObj = PDFFileObject()
+            pdfObj.fileName = name
+            realm.add(pdfObj)
+            document.write(to: baseURL.appendingPathComponent(name).appendingPathExtension("pdf"))
+        }
+    }
+
 }
 
 enum ImportError : Error {
