@@ -1,14 +1,23 @@
 import Realm
 import RealmSwift
+import PDFKit
 
 class DataManager {
     let pdfs: Results<PDFFileObject>
     let realm: Realm!
+    let baseURL: URL
 
     private init() {
         do {
             realm = try Realm()
             pdfs = realm.objects(PDFFileObject.self)
+            baseURL = try FileManager.default.url(
+                    for: .documentDirectory,
+                    in: .userDomainMask,
+                    appropriateFor: nil,
+                    create: true).appendingPathComponent("PDFs")
+            try FileManager.default.createDirectory(at: baseURL, withIntermediateDirectories: true)
+            print(baseURL)
         } catch let error {
             print(error)
             fatalError()
