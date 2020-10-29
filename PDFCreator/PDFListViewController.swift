@@ -27,6 +27,13 @@ class PDFListViewController: UITableViewController {
     }
 
     @IBAction func importTapped() {
+    func importFromFiles() {
+        let documentPicker = UIDocumentPickerViewController(documentTypes: ["com.adobe.pdf", "public.image"], in: .import)
+        documentPicker.allowsMultipleSelection = true
+        documentPicker.delegate = self
+        present(documentPicker, animated: true)
+    }
+
     }
 }
 
