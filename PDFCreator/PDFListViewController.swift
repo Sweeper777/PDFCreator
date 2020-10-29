@@ -70,6 +70,16 @@ extension PDFListViewController : UIDocumentPickerDelegate {
                 print(error)
             }
         } else {
+            showNamePrompt { name in
+                do {
+                    try DataManager.shared.importFiles(urls: urls, name: name)
+                    self.tableView.reloadData()
+                } catch ImportError.fileAlreadyExists {
+                    SCLAlertView().showError("Error", subTitle: "Another PDF file with this name already exists!", closeButtonTitle: "OK")
+                } catch {
+                    print(error)
+                }
+            }
         }
     }
 }
