@@ -37,3 +37,8 @@ class PDFListViewController: UITableViewController {
     }
 }
 
+extension PDFListViewController : UIDocumentPickerDelegate {
+    public func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
+    }
+}
+
