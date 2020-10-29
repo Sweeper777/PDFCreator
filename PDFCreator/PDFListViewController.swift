@@ -60,6 +60,17 @@ class PDFListViewController: UITableViewController {
 
 extension PDFListViewController : UIDocumentPickerDelegate {
     public func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
+        if urls.count == 1 {
+            do {
+                try DataManager.shared.importFile(url: urls.first!)
+                tableView.reloadData()
+            } catch ImportError.fileAlreadyExists {
+                SCLAlertView().showError("Error", subTitle: "Another PDF file with this name already exists!", closeButtonTitle: "OK")
+            } catch {
+                print(error)
+            }
+        } else {
+        }
     }
 }
 
