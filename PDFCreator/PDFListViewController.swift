@@ -46,6 +46,15 @@ class PDFListViewController: UITableViewController {
         present(documentPicker, animated: true)
     }
 
+    func showNamePrompt(completion: @escaping (String) -> Void) {
+        let nameInput = SCLAlertView()
+        let textField = nameInput.addTextField()
+        nameInput.addButton("OK") {
+            if textField.text.isNotNilNotEmpty {
+                completion(textField.text!)
+            }
+        }
+        nameInput.showEdit("", subTitle: "Please enter a name for the combined PDF:", closeButtonTitle: "Cancel")
     }
 }
 
