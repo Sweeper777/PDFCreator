@@ -27,6 +27,18 @@ class PDFListViewController: UITableViewController {
     }
 
     @IBAction func importTapped() {
+        let actionSheet = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+        actionSheet.addAction(UIAlertAction(title: "Import From Photo Library", style: .default) { _ in
+
+        })
+        actionSheet.addAction(UIAlertAction(title: "Import From Files", style: .default) { _ in
+            self.importFromFiles()
+        })
+        actionSheet.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+        actionSheet.popoverPresentationController?.barButtonItem = navigationItem.rightBarButtonItem
+        present(actionSheet, animated: true)
+    }
+
     func importFromFiles() {
         let documentPicker = UIDocumentPickerViewController(documentTypes: ["com.adobe.pdf", "public.image"], in: .import)
         documentPicker.allowsMultipleSelection = true
