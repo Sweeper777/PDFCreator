@@ -1,5 +1,8 @@
 import UIKit
 import RealmSwift
+import SCLAlertView
+import SwiftyUtils
+import PDFKit
 
 class PDFListViewController: UITableViewController {
 
@@ -24,6 +27,16 @@ class PDFListViewController: UITableViewController {
     }
 
     @IBAction func newTapped() {
+        showNamePrompt { name in
+            do {
+                try DataManager.shared.importPDF(document: PDFDocument(), name: name)
+                self.tableView.reloadData()
+            } catch ImportError.fileAlreadyExists {
+                SCLAlertView().showError("Error", subTitle: "Another PDF file with this name already exists!", closeButtonTitle: "OK")
+            } catch {
+                print(error)
+            }
+        }
     }
 
     @IBAction func importTapped() {
