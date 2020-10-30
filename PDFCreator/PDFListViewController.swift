@@ -5,7 +5,6 @@ import SwiftyUtils
 import PDFKit
 
 class PDFListViewController: UITableViewController {
-
     var pdfs: Results<PDFFileObject>!
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -23,6 +22,7 @@ class PDFListViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell")!
         cell.textLabel?.text = pdfs[indexPath.row].fileName
+        cell.imageView?.image = pdfs[indexPath.row].pdfDocument?.page(at: 0)?.thumbnail(of: CGSize(width: 44, height: 44), for: .artBox)
         return cell
     }
 
