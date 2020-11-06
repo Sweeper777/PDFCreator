@@ -121,3 +121,20 @@ extension PDFListViewController : UIDocumentPickerDelegate {
     }
 }
 
+//extension PDFListViewController : UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+//    public func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {
+//        picker.dismiss(animated: true)
+//        if let url = info[.imageURL] as? URL {
+//            showNamePrompt { name in
+//                do {
+//                    try DataManager.shared.importFiles(urls: [url], name: name)
+//                } catch ImportError.fileAlreadyExists {
+//                    SCLAlertView().showError("Error", subTitle: "Another PDF file with this name already exists!", closeButtonTitle: "OK")
+//                } catch {
+//                    print(error)
+//                }
+//            }
+//        }
+//    }
+//}
+
