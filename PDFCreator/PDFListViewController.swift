@@ -71,6 +71,17 @@ class PDFListViewController: UITableViewController {
         }
         nameInput.showEdit("", subTitle: "Please enter a name for the combined PDF:", closeButtonTitle: "Cancel")
     }
+
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        performSegue(withIdentifier: "showPDFEditor", sender: pdfs[indexPath.row])
+    }
+
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if let vc = segue.destination as? PDFEditorViewController,
+            let pdfFileObject = sender as? PDFFileObject {
+            vc.pdfFileObject = pdfFileObject
+        }
+    }
 }
 
 extension PDFListViewController : UIDocumentPickerDelegate {
