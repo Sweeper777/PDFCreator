@@ -24,6 +24,7 @@ class PDFListViewController: UITableViewController {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell")!
         cell.textLabel?.text = pdfs[indexPath.row].fileName
         cell.imageView?.image = pdfs[indexPath.row].pdfDocument?.page(at: 0)?.thumbnail(of: CGSize(width: 44, height: 44), for: .artBox)
+        cell.accessoryType = .disclosureIndicator
         return cell
     }
 
