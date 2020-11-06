@@ -3,6 +3,7 @@ import RealmSwift
 import SCLAlertView
 import SwiftyUtils
 import PDFKit
+import PhotosUI
 
 class PDFListViewController: UITableViewController {
     var pdfs: Results<PDFFileObject>!
@@ -44,7 +45,7 @@ class PDFListViewController: UITableViewController {
     @IBAction func importTapped() {
         let actionSheet = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
         actionSheet.addAction(UIAlertAction(title: "Import From Photo Library", style: .default) { _ in
-
+            self.importFromPhotoLibrary()
         })
         actionSheet.addAction(UIAlertAction(title: "Import From Files", style: .default) { _ in
             self.importFromFiles()
@@ -59,6 +60,16 @@ class PDFListViewController: UITableViewController {
         documentPicker.allowsMultipleSelection = true
         documentPicker.delegate = self
         present(documentPicker, animated: true)
+    }
+
+    func importFromPhotoLibrary() {
+//        let imagePicker = UIImagePickerController(rootViewController: self)
+//        imagePicker.delegate = self
+//        imagePicker.sourceType = .photoLibrary
+//        imagePicker.allowsEditing = false
+//        imagePicker.modalPresentationStyle = .popover
+//        imagePicker.popoverPresentationController?.barButtonItem = navigationItem.rightBarButtonItem
+//        present(imagePicker, animated: true)
     }
 
     func showNamePrompt(completion: @escaping (String) -> Void) {
