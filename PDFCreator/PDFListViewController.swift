@@ -9,6 +9,7 @@ class PDFListViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         pdfs = DataManager.shared.pdfs
+        navigationController?.navigationBar.tintColor = .white
     }
 
     override func numberOfSections(in tableView: UITableView) -> Int {
