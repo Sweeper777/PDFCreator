@@ -145,3 +145,26 @@ extension PDFListViewController : UIDocumentPickerDelegate {
 //    }
 //}
 
+extension PDFListViewController : PHPickerViewControllerDelegate {
+    func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
+        results.first?.itemProvider.loadObject(ofClass: UIImage.self, completionHandler: { (object, error) in
+            if let image = object as? UIImage {
+                DispatchQueue.main.async {
+                    let doc = PDFDocument()
+                    doc.insert(PDFPage(image: image)!, at: 0)
+                    self.showNamePrompt { name in
+                        do {
+                            try DataManager.shared.importPDF(document: doc, name: name)
+                            self.tableView.reloadData()
+                        } catch ImportError.fileAlreadyExists  {
+                            SCLAlertView().showError("Error", subTitle: "Another PDF file with this name already exists!", closeButtonTitle: "OK")
+                        } catch {
+                            print(error)
+                        }
+                    }
+                }
+            }
+        })
+        picker.dismiss(animated: true)
+    }
+}
