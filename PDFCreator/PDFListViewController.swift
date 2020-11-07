@@ -70,6 +70,13 @@ class PDFListViewController: UITableViewController {
 //        imagePicker.modalPresentationStyle = .popover
 //        imagePicker.popoverPresentationController?.barButtonItem = navigationItem.rightBarButtonItem
 //        present(imagePicker, animated: true)
+        var config = PHPickerConfiguration()
+        config.selectionLimit = 1
+        config.filter = PHPickerFilter.images
+
+        let pickerViewController = PHPickerViewController(configuration: config)
+        pickerViewController.delegate = self
+        self.present(pickerViewController, animated: true, completion: nil)
     }
 
     func showNamePrompt(completion: @escaping (String) -> Void) {
