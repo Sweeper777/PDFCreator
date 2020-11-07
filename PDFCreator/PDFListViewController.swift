@@ -63,13 +63,6 @@ class PDFListViewController: UITableViewController {
     }
 
     func importFromPhotoLibrary() {
-//        let imagePicker = UIImagePickerController(rootViewController: self)
-//        imagePicker.delegate = self
-//        imagePicker.sourceType = .photoLibrary
-//        imagePicker.allowsEditing = false
-//        imagePicker.modalPresentationStyle = .popover
-//        imagePicker.popoverPresentationController?.barButtonItem = navigationItem.rightBarButtonItem
-//        present(imagePicker, animated: true)
         var config = PHPickerConfiguration()
         config.selectionLimit = 1
         config.filter = PHPickerFilter.images
@@ -127,23 +120,6 @@ extension PDFListViewController : UIDocumentPickerDelegate {
         }
     }
 }
-
-//extension PDFListViewController : UIImagePickerControllerDelegate, UINavigationControllerDelegate {
-//    public func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {
-//        picker.dismiss(animated: true)
-//        if let url = info[.imageURL] as? URL {
-//            showNamePrompt { name in
-//                do {
-//                    try DataManager.shared.importFiles(urls: [url], name: name)
-//                } catch ImportError.fileAlreadyExists {
-//                    SCLAlertView().showError("Error", subTitle: "Another PDF file with this name already exists!", closeButtonTitle: "OK")
-//                } catch {
-//                    print(error)
-//                }
-//            }
-//        }
-//    }
-//}
 
 extension PDFListViewController : PHPickerViewControllerDelegate {
     func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
