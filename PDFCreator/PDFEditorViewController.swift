@@ -1,7 +1,9 @@
 import UIKit
 import PDFKit
+import PhotosUI
+import SCLAlertView
 
-class PDFEditorViewController : UIViewController {
+class PDFEditorViewController : UICollectionViewController {
     @IBOutlet var pagesCollectionView: UICollectionView!
     var pdfFileObject: PDFFileObject!
     var pdfDocument: PDFDocument!
@@ -14,16 +16,16 @@ class PDFEditorViewController : UIViewController {
     }
 }
 
-extension PDFEditorViewController : UICollectionViewDataSource, UICollectionViewDelegate {
-    public func numberOfSections(in collectionView: UICollectionView) -> Int {
+extension PDFEditorViewController {
+    public override func numberOfSections(in collectionView: UICollectionView) -> Int {
         1
     }
 
-    public func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+    public override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         pdfDocument.pageCount
     }
 
-    public func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+    public override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath) as! PDFPageCell
         cell.imageView.image = pdfDocument.page(at: indexPath.item)?.thumbnail(of: CGSize(width: 88, height: 88), for: .artBox)
         return cell
