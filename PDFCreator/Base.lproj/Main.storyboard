@@ -2,9 +2,7 @@
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="17156" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="lxF-Pe-vHQ">
     <device id="retina4_7" orientation="portrait" appearance="light"/>
     <dependencies>
-        <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17125"/>
-        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17126"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="collection view cell content view" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -57,7 +55,7 @@
                         </barButtonItem>
                     </navigationItem>
                     <connections>
-                        <segue destination="NWc-mN-mEN" kind="show" identifier="showPDFEditor" id="giH-WE-JMe"/>
+                        <segue destination="9Kv-vo-QC2" kind="show" identifier="showPDFEditor" id="ISh-Bc-uOS"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="U4F-1k-Z7o" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
@@ -65,52 +63,55 @@
             <point key="canvasLocation" x="787" y="117"/>
         </scene>
         <!--Editor View Controller-->
-        <scene sceneID="0gQ-97-Wok">
+        <scene sceneID="998-NL-lzA">
             <objects>
-                <viewController id="NWc-mN-mEN" customClass="PDFEditorViewController" customModule="PDFCreator" customModuleProvider="target" sceneMemberID="viewController">
-                    <view key="view" contentMode="scaleToFill" id="oss-cn-Gjo">
+                <collectionViewController id="9Kv-vo-QC2" customClass="PDFEditorViewController" customModule="PDFCreator" customModuleProvider="target" sceneMemberID="viewController">
+                    <collectionView key="view" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" id="Rhk-Ba-Ilv">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <subviews>
-                            <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="Ivw-Sr-gj2">
-                                <rect key="frame" x="8" y="52" width="375" height="623"/>
-                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
-                                <collectionViewFlowLayout key="collectionViewLayout" automaticEstimatedItemSize="YES" minimumLineSpacing="10" minimumInteritemSpacing="10" id="CUQ-Wy-3kd">
-                                    <size key="itemSize" width="128" height="128"/>
-                                    <size key="headerReferenceSize" width="0.0" height="0.0"/>
-                                    <size key="footerReferenceSize" width="0.0" height="0.0"/>
-                                    <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
-                                </collectionViewFlowLayout>
-                                <cells>
-                                    <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="cell" id="L4e-MF-UE7">
-                                        <rect key="frame" x="0.0" y="0.0" width="88" height="88"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                        <collectionViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="7i1-4F-2rD" customClass="PDFPageCell" customModule="PDFCreator" customModuleProvider="target">
-                                            <rect key="frame" x="0.0" y="0.0" width="88" height="88"/>
-                                            <autoresizingMask key="autoresizingMask"/>
-                                        </collectionViewCellContentView>
-                                        <size key="customSize" width="88" height="88"/>
-                                    </collectionViewCell>
-                                </cells>
-                            </collectionView>
-                        </subviews>
-                        <viewLayoutGuide key="safeArea" id="g8P-Xk-9Yr"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
-                        <constraints>
-                            <constraint firstItem="Ivw-Sr-gj2" firstAttribute="bottom" secondItem="g8P-Xk-9Yr" secondAttribute="bottom" constant="8" id="1SR-Ry-6Uf"/>
-                            <constraint firstItem="Ivw-Sr-gj2" firstAttribute="leading" secondItem="g8P-Xk-9Yr" secondAttribute="leading" constant="8" id="3qd-6v-leX"/>
-                            <constraint firstItem="Ivw-Sr-gj2" firstAttribute="trailing" secondItem="g8P-Xk-9Yr" secondAttribute="trailing" constant="8" id="dxR-X1-5xp"/>
-                            <constraint firstItem="Ivw-Sr-gj2" firstAttribute="top" secondItem="g8P-Xk-9Yr" secondAttribute="top" constant="8" id="yKR-Rz-3Cu"/>
-                        </constraints>
-                    </view>
-                    <navigationItem key="navigationItem" id="hH5-qa-bJ0"/>
+                        <collectionViewFlowLayout key="collectionViewLayout" automaticEstimatedItemSize="YES" minimumLineSpacing="10" minimumInteritemSpacing="10" id="ArW-Rx-fnR">
+                            <size key="itemSize" width="128" height="128"/>
+                            <size key="headerReferenceSize" width="0.0" height="0.0"/>
+                            <size key="footerReferenceSize" width="0.0" height="0.0"/>
+                            <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
+                        </collectionViewFlowLayout>
+                        <cells>
+                            <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="cell" id="uOs-aB-AVh" customClass="PDFPageCell" customModule="PDFCreator" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="0.0" width="88" height="88"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <collectionViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="Nhh-BN-BxO">
+                                    <rect key="frame" x="0.0" y="0.0" width="88" height="88"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                </collectionViewCellContentView>
+                                <size key="customSize" width="88" height="88"/>
+                            </collectionViewCell>
+                        </cells>
+                        <connections>
+                            <outlet property="dataSource" destination="9Kv-vo-QC2" id="rHi-hD-DvJ"/>
+                            <outlet property="delegate" destination="9Kv-vo-QC2" id="CMb-zt-d3K"/>
+                        </connections>
+                    </collectionView>
+                    <navigationItem key="navigationItem" id="ZZN-fM-mho">
+                        <rightBarButtonItems>
+                            <barButtonItem systemItem="add" id="t61-7F-gu4">
+                                <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <connections>
+                                    <action selector="addPage" destination="9Kv-vo-QC2" id="IWe-as-r1O"/>
+                                </connections>
+                            </barButtonItem>
+                            <barButtonItem title="Item" image="ellipsis" catalog="system" id="wVA-rv-vcX">
+                                <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            </barButtonItem>
+                        </rightBarButtonItems>
+                    </navigationItem>
                     <connections>
-                        <outlet property="pagesCollectionView" destination="Ivw-Sr-gj2" id="clW-5r-b6n"/>
+                        <outlet property="pagesCollectionView" destination="Rhk-Ba-Ilv" id="dDk-82-zhg"/>
                     </connections>
-                </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="CDK-Li-yC4" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+                </collectionViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="5az-75-lr7" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1732" y="115.59220389805098"/>
+            <point key="canvasLocation" x="1791" y="116"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="v0a-pt-dcn">
@@ -134,6 +135,7 @@
         </scene>
     </scenes>
     <resources>
+        <image name="ellipsis" catalog="system" width="128" height="37"/>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>
