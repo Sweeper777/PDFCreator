@@ -97,3 +97,11 @@ extension PDFFileObject {
         DataManager.shared.baseURL.appendingPathComponent(fileName).appendingPathExtension("pdf")
     }
 }
+
+extension PDFDocument {
+    func appendDocument(_ other: PDFDocument) {
+        for i in 0..<other.pageCount {
+            insert(other.page(at: i)!, at: pageCount)
+        }
+    }
+}
