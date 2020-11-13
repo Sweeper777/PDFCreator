@@ -80,7 +80,7 @@ class PDFListViewController: UITableViewController {
                 completion(textField.text!)
             }
         }
-        nameInput.showEdit("", subTitle: "Please enter a name for the combined PDF:", closeButtonTitle: "Cancel")
+        nameInput.showEdit("", subTitle: "Please enter a name for the PDF:", closeButtonTitle: "Cancel")
     }
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
