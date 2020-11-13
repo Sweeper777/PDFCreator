@@ -40,7 +40,7 @@ class DataManager {
             let pdfObj = PDFFileObject()
             pdfObj.fileName = name
             realm.add(pdfObj)
-            document.write(to: baseURL.appendingPathComponent(name).appendingPathExtension("pdf"))
+            document.write(to: pdfObj.fileURL)
         }
     }
 
