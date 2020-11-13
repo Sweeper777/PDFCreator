@@ -81,6 +81,14 @@ class DataManager {
         }
         try importPDF(document: pdf, name: url.deletingPathExtension().lastPathComponent)
     }
+
+    func deletePDFObject(_ pdfObj: PDFFileObject) throws {
+        try realm.write {
+            realm.delete(pdfObj)
+        }
+        try FileManager.default.removeItem(at: pdfObj.fileURL)
+    }
+
 }
 
 enum ImportError : Error {
