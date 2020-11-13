@@ -89,6 +89,14 @@ class DataManager {
         try FileManager.default.removeItem(at: pdfObj.fileURL)
     }
 
+    func renamePDFObject(_ pdfObj: PDFFileObject, to newName: String) throws {
+        try realm.write {
+            let oldURL = pdfObj.fileURL
+            pdfObj.fileName = newName
+            let newURL = pdfObj.fileURL
+            try FileManager.default.moveItem(at: oldURL, to: newURL)
+        }
+    }
 }
 
 enum ImportError : Error {
