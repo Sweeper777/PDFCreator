@@ -30,4 +30,18 @@ extension PDFEditorViewController {
         cell.imageView.image = pdfDocument.page(at: indexPath.item)?.thumbnail(of: CGSize(width: 88, height: 88), for: .artBox)
         return cell
     }
+extension PDFEditorViewController : PHPickerViewControllerDelegate {
+    func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
+        results.first?.itemProvider.loadObject(ofClass: UIImage.self, completionHandler: { (object, error) in
+            if let image = object as? UIImage,
+                let page = PDFPage(image: image) {
+                DispatchQueue.main.async {
+                    self.pdfDocument.insert(page, at: self.pdfDocument.pageCount)
+                    self.pdfDocument.write(to: self.pdfFileObject.fileURL)
+                    self.pagesCollectionView.insertItems(at: [IndexPath(item: self.pdfDocument.pageCount - 1, section: 0)])
+                }
+            }
+        })
+        picker.dismiss(animated: true)
+    }
 }
