@@ -92,4 +92,8 @@ extension PDFFileObject {
     var pdfDocument: PDFDocument? {
         PDFDocument(url: DataManager.shared.baseURL.appendingPathComponent(fileName).appendingPathExtension("pdf"))
     }
+
+    var fileURL: URL {
+        DataManager.shared.baseURL.appendingPathComponent(fileName).appendingPathExtension("pdf")
+    }
 }
