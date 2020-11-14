@@ -14,6 +14,14 @@ class PDFEditorViewController : UICollectionViewController {
         pdfDocument = pdfFileObject.pdfDocument
         pagesCollectionView.register(UINib(nibName: "PDFPageCell", bundle: nil), forCellWithReuseIdentifier: "cell")
     }
+
+    func importFromFiles() {
+        let documentPicker = UIDocumentPickerViewController(documentTypes: ["com.adobe.pdf", "public.image"], in: .import)
+        documentPicker.allowsMultipleSelection = false
+        documentPicker.delegate = self
+        present(documentPicker, animated: true)
+    }
+
 }
 
 extension PDFEditorViewController {
