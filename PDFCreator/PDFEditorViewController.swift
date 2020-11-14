@@ -15,6 +15,19 @@ class PDFEditorViewController : UICollectionViewController {
         pagesCollectionView.register(UINib(nibName: "PDFPageCell", bundle: nil), forCellWithReuseIdentifier: "cell")
     }
 
+    @IBAction func addPage() {
+        let actionSheet = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+        actionSheet.addAction(UIAlertAction(title: "From Photo Library", style: .default) { _ in
+            self.importFromPhotoLibrary()
+        })
+        actionSheet.addAction(UIAlertAction(title: "From Files", style: .default) { _ in
+            self.importFromFiles()
+        })
+        actionSheet.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+        actionSheet.popoverPresentationController?.barButtonItem = navigationItem.rightBarButtonItem
+        present(actionSheet, animated: true)
+    }
+
     func importFromFiles() {
         let documentPicker = UIDocumentPickerViewController(documentTypes: ["com.adobe.pdf", "public.image"], in: .import)
         documentPicker.allowsMultipleSelection = false
