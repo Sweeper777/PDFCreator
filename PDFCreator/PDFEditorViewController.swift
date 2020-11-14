@@ -30,6 +30,25 @@ extension PDFEditorViewController {
         cell.imageView.image = pdfDocument.page(at: indexPath.item)?.thumbnail(of: CGSize(width: 88, height: 88), for: .artBox)
         return cell
     }
+}
+
+extension PDFEditorViewController : UIDocumentPickerDelegate {
+    public func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentAt url: URL) {
+        if let pdf = PDFDocument(url: url) {
+            self.pdfDocument.appendDocument(pdf)
+            self.pdfDocument.write(to: pdfFileObject.fileURL)
+            let originalPageCount = pdfDocument.pageCount - pdf.pageCount
+            pagesCollectionView.insertItems(at: (originalPageCount..<pdfDocument.pageCount).map { IndexPath(item: $0, section: 0) })
+        } else if let image = UIImage(contentsOfFile: url.path),
+            let page = PDFPage(image: image) {
+            self.pdfDocument.insert(page, at: self.pdfDocument.pageCount)
+            self.pdfDocument.write(to: pdfFileObject.fileURL)
+        } else {
+            SCLAlertView().showError("Error", subTitle: "Invalid file selected!", closeButtonTitle: "OK")
+        }
+    }
+}
+
 extension PDFEditorViewController : PHPickerViewControllerDelegate {
     func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
         results.first?.itemProvider.loadObject(ofClass: UIImage.self, completionHandler: { (object, error) in
