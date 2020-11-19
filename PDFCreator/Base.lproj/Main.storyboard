@@ -106,6 +106,7 @@
                         </rightBarButtonItems>
                     </navigationItem>
                     <connections>
+                        <outlet property="moreButton" destination="wVA-rv-vcX" id="EdO-Ut-z9r"/>
                         <outlet property="pagesCollectionView" destination="Rhk-Ba-Ilv" id="dDk-82-zhg"/>
                     </connections>
                 </collectionViewController>

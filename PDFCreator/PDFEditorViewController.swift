@@ -7,6 +7,7 @@ class PDFEditorViewController : UICollectionViewController {
     @IBOutlet var pagesCollectionView: UICollectionView!
     var pdfFileObject: PDFFileObject!
     var pdfDocument: PDFDocument!
+    @IBOutlet var moreButton: UIBarButtonItem!
 
     override func viewDidLoad() {
         pagesCollectionView.delegate = self
