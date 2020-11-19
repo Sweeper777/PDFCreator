@@ -17,6 +17,7 @@ class PDFEditorViewController : UICollectionViewController {
 
         setUpMoreMenu()
 
+        title = pdfFileObject.fileName
     }
 
     @IBAction func addPage() {
