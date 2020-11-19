@@ -14,6 +14,9 @@ class PDFEditorViewController : UICollectionViewController {
         pagesCollectionView.dataSource = self
         pdfDocument = pdfFileObject.pdfDocument
         pagesCollectionView.register(UINib(nibName: "PDFPageCell", bundle: nil), forCellWithReuseIdentifier: "cell")
+
+        setUpMoreMenu()
+
     }
 
     @IBAction func addPage() {
@@ -45,6 +48,20 @@ class PDFEditorViewController : UICollectionViewController {
         pickerViewController.delegate = self
         self.present(pickerViewController, animated: true, completion: nil)
     }
+
+    func setUpMoreMenu() {
+        moreButton.menu = UIMenu(children: [
+            UIAction(title: "Export", image: UIImage(systemName: "square.and.arrow.up")!) { action in
+            },
+            UIAction(title: "Rename", image: UIImage(systemName: "pencil")!) { action in
+            },
+            UIMenu(options: .displayInline, children: [
+                UIAction(title: "Delete", image: UIImage(systemName: "trash")!, attributes: .destructive) { action in
+                },
+            ])
+        ])
+    }
+
 }
 
 extension PDFEditorViewController {
