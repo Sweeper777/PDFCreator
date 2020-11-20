@@ -55,12 +55,38 @@ class PDFEditorViewController : UICollectionViewController {
             UIAction(title: "Export", image: UIImage(systemName: "square.and.arrow.up")!) { action in
             },
             UIAction(title: "Rename", image: UIImage(systemName: "pencil")!) { action in
+                self.renameTapped()
             },
             UIMenu(options: .displayInline, children: [
                 UIAction(title: "Delete", image: UIImage(systemName: "trash")!, attributes: .destructive) { action in
                 },
             ])
         ])
+    }
+
+    func renameTapped() {
+        func showNamePrompt(completion: @escaping (String) -> Void) {
+            let nameInput = SCLAlertView()
+            let textField = nameInput.addTextField()
+            nameInput.addButton("OK") {
+                if textField.text.isNotNilNotEmpty {
+                    completion(textField.text!)
+                }
+            }
+            nameInput.showEdit("", subTitle: "Please enter a new name for the PDF:", closeButtonTitle: "Cancel")
+        }
+
+        showNamePrompt { newName in
+            do {
+                try DataManager.shared.renamePDFObject(self.pdfFileObject, to: newName)
+                self.title = newName
+            } catch ImportError.fileAlreadyExists {
+                SCLAlertView().showError("Error", subTitle: "This name has already been used!", closeButtonTitle: "OK")
+            } catch {
+                SCLAlertView().showError("Error", subTitle: "An unknown error occurred!", closeButtonTitle: "OK")
+                print(error)
+            }
+        }
     }
 
 }
