@@ -59,6 +59,7 @@ class PDFEditorViewController : UICollectionViewController {
             },
             UIMenu(options: .displayInline, children: [
                 UIAction(title: "Delete", image: UIImage(systemName: "trash")!, attributes: .destructive) { action in
+                    self.deleteFileTapped()
                 },
             ])
         ])
@@ -86,6 +87,16 @@ class PDFEditorViewController : UICollectionViewController {
                 SCLAlertView().showError("Error", subTitle: "An unknown error occurred!", closeButtonTitle: "OK")
                 print(error)
             }
+        }
+    }
+
+    func deleteFileTapped() {
+        do {
+            try DataManager.shared.deletePDFObject(pdfFileObject)
+            navigationController?.popViewController(animated: true)
+        } catch {
+            SCLAlertView().showError("Error", subTitle: "An unknown error occurred!", closeButtonTitle: "OK")
+            print(error)
         }
     }
 
