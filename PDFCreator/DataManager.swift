@@ -91,6 +91,11 @@ class DataManager {
     }
 
     func renamePDFObject(_ pdfObj: PDFFileObject, to newName: String) throws {
+        let existingFiles = pdfs.filter("fileName == %@", newName)
+        if existingFiles.count > 0 {
+            throw ImportError.fileAlreadyExists
+        }
+
         try realm.write {
             let oldURL = pdfObj.fileURL
             pdfObj.fileName = newName
