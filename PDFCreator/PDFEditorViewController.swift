@@ -82,6 +82,7 @@ extension PDFEditorViewController {
 
     override func collectionView(_ collectionView: UICollectionView, contextMenuConfigurationForItemAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
         UIContextMenuConfiguration(identifier: nil) {
+            self.makePDFPagePreview(page: self.pdfDocument.page(at: indexPath.row)!)
         }
         actionProvider: { elements in
             UIMenu(children: [
@@ -104,6 +105,18 @@ extension PDFEditorViewController {
             ])
         }
     }
+
+    func makePDFPagePreview(page: PDFPage) -> UIViewController {
+        let viewController = UIViewController()
+        let pageSize = page.bounds(for: .artBox).size
+        let imageView = UIImageView(image: page.thumbnail(of: pageSize, for: .artBox))
+        imageView.contentMode = .scaleAspectFit
+        viewController.view = imageView
+        viewController.preferredContentSize = pageSize
+
+        return viewController
+    }
+
 }
 
 extension PDFEditorViewController : UIDocumentPickerDelegate {
