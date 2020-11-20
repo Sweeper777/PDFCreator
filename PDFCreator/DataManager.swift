@@ -83,10 +83,11 @@ class DataManager {
     }
 
     func deletePDFObject(_ pdfObj: PDFFileObject) throws {
+        let url = pdfObj.fileURL
         try realm.write {
             realm.delete(pdfObj)
         }
-        try FileManager.default.removeItem(at: pdfObj.fileURL)
+        try FileManager.default.removeItem(at: url)
     }
 
     func renamePDFObject(_ pdfObj: PDFFileObject, to newName: String) throws {
