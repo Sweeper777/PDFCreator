@@ -13,6 +13,11 @@ class PDFListViewController: UITableViewController {
         navigationController?.navigationBar.tintColor = .white
     }
 
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        tableView.reloadData()
+    }
+
     override func numberOfSections(in tableView: UITableView) -> Int {
         1
     }
