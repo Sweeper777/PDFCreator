@@ -79,6 +79,31 @@ extension PDFEditorViewController {
         cell.imageView.image = pdfDocument.page(at: indexPath.item)?.thumbnail(of: CGSize(width: 88, height: 88), for: .artBox)
         return cell
     }
+
+    override func collectionView(_ collectionView: UICollectionView, contextMenuConfigurationForItemAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
+        UIContextMenuConfiguration(identifier: nil) {
+        }
+        actionProvider: { elements in
+            UIMenu(children: [
+                UIMenu(options: .displayInline, children: [
+                    UIAction(title: "Preview") { action in
+
+                    },
+                ]),
+                UIAction(title: "Rotate Left", image: UIImage(systemName: "rotate.left")!) { action in
+
+                },
+                UIAction(title: "Rotate Right", image: UIImage(systemName: "rotate.right")!) { action in
+
+                },
+                UIMenu(options: .displayInline, children: [
+                    UIAction(title: "Delete", image: UIImage(systemName: "trash")!, attributes: .destructive) { action in
+
+                    },
+                ]),
+            ])
+        }
+    }
 }
 
 extension PDFEditorViewController : UIDocumentPickerDelegate {
