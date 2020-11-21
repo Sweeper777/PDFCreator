@@ -53,6 +53,7 @@ class PDFEditorViewController : UICollectionViewController {
     func setUpMoreMenu() {
         moreButton.menu = UIMenu(children: [
             UIAction(title: "Export", image: UIImage(systemName: "square.and.arrow.up")!) { action in
+                self.exportTapped()
             },
             UIAction(title: "Rename", image: UIImage(systemName: "pencil")!) { action in
                 self.renameTapped()
@@ -100,6 +101,10 @@ class PDFEditorViewController : UICollectionViewController {
         }
     }
 
+    func exportTapped() {
+        let shareSheet = UIActivityViewController(activityItems: [pdfFileObject.fileURL], applicationActivities: nil)
+        present(shareSheet, animated: true)
+    }
 }
 
 extension PDFEditorViewController {
