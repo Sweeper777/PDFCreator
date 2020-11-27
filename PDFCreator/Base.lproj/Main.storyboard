@@ -3,6 +3,7 @@
     <device id="retina4_7" orientation="portrait" appearance="light"/>
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17126"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="collection view cell content view" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -108,11 +109,28 @@
                     <connections>
                         <outlet property="moreButton" destination="wVA-rv-vcX" id="EdO-Ut-z9r"/>
                         <outlet property="pagesCollectionView" destination="Rhk-Ba-Ilv" id="dDk-82-zhg"/>
+                        <segue destination="ckl-58-LsQ" kind="show" identifier="inspectPDF" id="RCk-Jt-qWf"/>
                     </connections>
                 </collectionViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="5az-75-lr7" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="1791" y="116"/>
+        </scene>
+        <!--View Controller-->
+        <scene sceneID="E70-T3-H5s">
+            <objects>
+                <viewController id="ckl-58-LsQ" customClass="PDFViewController" customModule="PDFCreator" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="DbU-3P-K3U">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <viewLayoutGuide key="safeArea" id="nih-Fh-ouq"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                    </view>
+                    <navigationItem key="navigationItem" id="M9W-fO-fhl"/>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="eFQ-F2-L0u" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="2521" y="116"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="v0a-pt-dcn">
