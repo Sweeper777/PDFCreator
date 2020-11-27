@@ -113,6 +113,13 @@ class PDFEditorViewController : UICollectionViewController {
         collectionView.reloadItems(at: [IndexPath(item: pageIndex, section: 0)])
     }
 
+    func rotateRightTapped(pageIndex: Int) {
+        let page = pdfDocument.page(at: pageIndex)!
+        page.rotation += 90
+        pdfDocument.write(to: pdfFileObject.fileURL)
+        collectionView.reloadItems(at: [IndexPath(item: pageIndex, section: 0)])
+    }
+
 }
 
 extension PDFEditorViewController {
@@ -146,7 +153,8 @@ extension PDFEditorViewController {
                     collectionView.reloadItems(at: [indexPath])
                 },
                 UIAction(title: "Rotate Right", image: UIImage(systemName: "rotate.right")!) { action in
-
+                    self.rotateRightTapped(pageIndex: indexPath.row)
+                    collectionView.reloadItems(at: [indexPath])
                 },
                 UIMenu(options: .displayInline, children: [
                     UIAction(title: "Delete", image: UIImage(systemName: "trash")!, attributes: .destructive) { action in
