@@ -105,6 +105,14 @@ class PDFEditorViewController : UICollectionViewController {
         let shareSheet = UIActivityViewController(activityItems: [pdfFileObject.fileURL], applicationActivities: nil)
         present(shareSheet, animated: true)
     }
+
+    func rotateLeftTapped(pageIndex: Int) {
+        let page = pdfDocument.page(at: pageIndex)!
+        page.rotation -= 90
+        pdfDocument.write(to: pdfFileObject.fileURL)
+        collectionView.reloadItems(at: [IndexPath(item: pageIndex, section: 0)])
+    }
+
 }
 
 extension PDFEditorViewController {
@@ -134,7 +142,8 @@ extension PDFEditorViewController {
                     },
                 ]),
                 UIAction(title: "Rotate Left", image: UIImage(systemName: "rotate.left")!) { action in
-
+                    self.rotateLeftTapped(pageIndex: indexPath.row)
+                    collectionView.reloadItems(at: [indexPath])
                 },
                 UIAction(title: "Rotate Right", image: UIImage(systemName: "rotate.right")!) { action in
 
