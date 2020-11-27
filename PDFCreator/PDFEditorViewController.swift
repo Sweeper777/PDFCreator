@@ -120,6 +120,12 @@ class PDFEditorViewController : UICollectionViewController {
         collectionView.reloadItems(at: [IndexPath(item: pageIndex, section: 0)])
     }
 
+    func deletePageTapped(pageIndex: Int) {
+        pdfDocument.removePage(at: pageIndex)
+        pdfDocument.write(to: pdfFileObject.fileURL)
+        collectionView.deleteItems(at: [IndexPath(item: pageIndex, section: 0)])
+    }
+
 }
 
 extension PDFEditorViewController {
@@ -158,7 +164,7 @@ extension PDFEditorViewController {
                 },
                 UIMenu(options: .displayInline, children: [
                     UIAction(title: "Delete", image: UIImage(systemName: "trash")!, attributes: .destructive) { action in
-
+                        self.deletePageTapped(pageIndex: indexPath.row)
                     },
                 ]),
             ])
