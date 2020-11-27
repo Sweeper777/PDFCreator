@@ -150,8 +150,7 @@ extension PDFEditorViewController {
         actionProvider: { elements in
             UIMenu(children: [
                 UIMenu(options: .displayInline, children: [
-                    UIAction(title: "Preview") { action in
-
+                    UIAction(title: "Inspect") { action in
                     },
                 ]),
                 UIAction(title: "Rotate Left", image: UIImage(systemName: "rotate.left")!) { action in
