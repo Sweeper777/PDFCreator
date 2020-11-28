@@ -126,6 +126,12 @@ class PDFEditorViewController : UICollectionViewController {
         collectionView.deleteItems(at: [IndexPath(item: pageIndex, section: 0)])
     }
 
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if let vc = segue.destination as? PDFViewController {
+            vc.document = pdfDocument
+            vc.pageIndex = sender as? Int ?? 0
+        }
+    }
 }
 
 extension PDFEditorViewController {
@@ -151,6 +157,7 @@ extension PDFEditorViewController {
             UIMenu(children: [
                 UIMenu(options: .displayInline, children: [
                     UIAction(title: "Inspect") { action in
+                        self.performSegue(withIdentifier: "inspectPDF", sender: indexPath.row)
                     },
                 ]),
                 UIAction(title: "Rotate Left", image: UIImage(systemName: "rotate.left")!) { action in
