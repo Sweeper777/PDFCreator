@@ -222,3 +222,14 @@ extension PDFEditorViewController : PHPickerViewControllerDelegate {
         picker.dismiss(animated: true)
     }
 }
+
+extension PDFEditorViewController : UICollectionViewDragDelegate, UICollectionViewDropDelegate {
+    func collectionView(_ collectionView: UICollectionView, itemsForBeginning session: UIDragSession, at indexPath: IndexPath) -> [UIDragItem] {
+        let page = pdfDocument.page(at: indexPath.item)
+        let itemProvider = NSItemProvider(item: nil, typeIdentifier: nil)
+        let dragItem = UIDragItem(itemProvider: itemProvider)
+        dragItem.localObject = page
+        return [dragItem]
+    }
+
+}
