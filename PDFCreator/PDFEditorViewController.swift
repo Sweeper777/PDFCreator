@@ -239,4 +239,20 @@ extension PDFEditorViewController : UICollectionViewDragDelegate, UICollectionVi
         return UICollectionViewDropProposal(operation: .forbidden)
     }
 
+    func movePage(to destinationIndexPath: IndexPath, with coordinator: UICollectionViewDropCoordinator) {
+        guard let item = coordinator.items.first,
+                let sourceIndexPath = item.sourceIndexPath,
+                let pageToInsert = item.dragItem.localObject as? PDFPage else {
+            return
+        }
+        collectionView.performBatchUpdates {
+            self.pdfDocument.removePage(at: sourceIndexPath.item)
+            self.pdfDocument.insert(pageToInsert, at: destinationIndexPath.item)
+            self.pdfDocument.write(to: self.pdfFileObject.fileURL)
+
+            self.collectionView.deleteItems(at: [sourceIndexPath])
+            self.collectionView.insertItems(at: [destinationIndexPath])
+        }
+        coordinator.drop(item.dragItem, toItemAt: destinationIndexPath)
+    }
 }
