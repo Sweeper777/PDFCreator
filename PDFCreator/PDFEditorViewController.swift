@@ -239,6 +239,13 @@ extension PDFEditorViewController : UICollectionViewDragDelegate, UICollectionVi
         return UICollectionViewDropProposal(operation: .forbidden)
     }
 
+    func collectionView(_ collectionView: UICollectionView, performDropWith coordinator: UICollectionViewDropCoordinator) {
+        let destinationIndexPath = coordinator.destinationIndexPath ?? IndexPath(item: pdfDocument.pageCount - 1, section: 0)
+        if coordinator.proposal.operation == .move {
+            movePage(to: destinationIndexPath, with: coordinator)
+        }
+    }
+
     func movePage(to destinationIndexPath: IndexPath, with coordinator: UICollectionViewDropCoordinator) {
         guard let item = coordinator.items.first,
                 let sourceIndexPath = item.sourceIndexPath,
