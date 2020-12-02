@@ -113,6 +113,7 @@ class PDFEditorViewController : UICollectionViewController {
     }
 
     func editMetadataTapped() {
+        performSegue(withIdentifier: "showMetadataEditor", sender: pdfFileObject)
     }
 
     func rotateLeftTapped(pageIndex: Int) {
@@ -139,6 +140,8 @@ class PDFEditorViewController : UICollectionViewController {
         if let vc = segue.destination as? PDFViewController {
             vc.document = pdfDocument
             vc.pageIndex = sender as? Int ?? 0
+        } else if let vc = segue.destination as? MetadataEditorViewController {
+            vc.pdfFileObject = pdfFileObject
         }
     }
 }
