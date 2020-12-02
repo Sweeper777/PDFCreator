@@ -61,6 +61,9 @@ class PDFEditorViewController : UICollectionViewController {
             UIAction(title: "Rename", image: UIImage(systemName: "pencil")!) { action in
                 self.renameTapped()
             },
+            UIAction(title: "Edit Metadata", image: UIImage(systemName: "pencil.and.ellipsis.rectangle")!) { action in
+                self.editMetadataTapped()
+            },
             UIMenu(options: .displayInline, children: [
                 UIAction(title: "Delete", image: UIImage(systemName: "trash")!, attributes: .destructive) { action in
                     self.deleteFileTapped()
@@ -107,6 +110,9 @@ class PDFEditorViewController : UICollectionViewController {
     func exportTapped() {
         let shareSheet = UIActivityViewController(activityItems: [pdfFileObject.fileURL], applicationActivities: nil)
         present(shareSheet, animated: true)
+    }
+
+    func editMetadataTapped() {
     }
 
     func rotateLeftTapped(pageIndex: Int) {
