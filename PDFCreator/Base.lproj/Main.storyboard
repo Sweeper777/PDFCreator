@@ -110,11 +110,28 @@
                         <outlet property="moreButton" destination="wVA-rv-vcX" id="EdO-Ut-z9r"/>
                         <outlet property="pagesCollectionView" destination="Rhk-Ba-Ilv" id="dDk-82-zhg"/>
                         <segue destination="ckl-58-LsQ" kind="show" identifier="inspectPDF" id="RCk-Jt-qWf"/>
+                        <segue destination="K0K-RD-RHZ" kind="show" identifier="showMetadataEditor" id="aNe-dT-hTe"/>
                     </connections>
                 </collectionViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="5az-75-lr7" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="1791" y="116"/>
+        </scene>
+        <!--Edit Metadata-->
+        <scene sceneID="LEV-u0-to3">
+            <objects>
+                <viewController id="K0K-RD-RHZ" customClass="MetadataEditorViewController" customModule="PDFCreator" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="Xwu-1S-68X">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <viewLayoutGuide key="safeArea" id="Tw1-Dt-yPi"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                    </view>
+                    <navigationItem key="navigationItem" title="Edit Metadata" id="sKG-eD-6q9"/>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="2gt-gX-9aQ" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1790" y="869"/>
         </scene>
         <!--View Controller-->
         <scene sceneID="E70-T3-H5s">
