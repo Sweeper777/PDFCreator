@@ -151,26 +151,26 @@ extension PDFEditorViewController {
 
     override func collectionView(_ collectionView: UICollectionView, contextMenuConfigurationForItemAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
         UIContextMenuConfiguration(identifier: nil) {
-            self.makePDFPagePreview(page: self.pdfDocument.page(at: indexPath.row)!)
+            self.makePDFPagePreview(page: self.pdfDocument.page(at: indexPath.item)!)
         }
         actionProvider: { elements in
             UIMenu(children: [
                 UIMenu(options: .displayInline, children: [
                     UIAction(title: "Inspect") { action in
-                        self.performSegue(withIdentifier: "inspectPDF", sender: indexPath.row)
+                        self.performSegue(withIdentifier: "inspectPDF", sender: indexPath.item)
                     },
                 ]),
                 UIAction(title: "Rotate Left", image: UIImage(systemName: "rotate.left")!) { action in
-                    self.rotateLeftTapped(pageIndex: indexPath.row)
+                    self.rotateLeftTapped(pageIndex: indexPath.item)
                     collectionView.reloadItems(at: [indexPath])
                 },
                 UIAction(title: "Rotate Right", image: UIImage(systemName: "rotate.right")!) { action in
-                    self.rotateRightTapped(pageIndex: indexPath.row)
+                    self.rotateRightTapped(pageIndex: indexPath.item)
                     collectionView.reloadItems(at: [indexPath])
                 },
                 UIMenu(options: .displayInline, children: [
                     UIAction(title: "Delete", image: UIImage(systemName: "trash")!, attributes: .destructive) { action in
-                        self.deletePageTapped(pageIndex: indexPath.row)
+                        self.deletePageTapped(pageIndex: indexPath.item)
                     },
                 ]),
             ])
