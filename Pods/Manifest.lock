@@ -1,4 +1,5 @@
 PODS:
+  - Eureka (5.3.1)
   - Realm (5.4.4):
     - Realm/Headers (= 5.4.4)
   - Realm/Headers (5.4.4)
@@ -8,6 +9,7 @@ PODS:
   - SwiftyUtils (5.2.0)
 
 DEPENDENCIES:
+  - Eureka
   - Realm
   - RealmSwift
   - SCLAlertView (from `https://github.com/vikmeup/SCLAlertView-Swift.git`)
@@ -15,6 +17,7 @@ DEPENDENCIES:
 
 SPEC REPOS:
   trunk:
+    - Eureka
     - Realm
     - RealmSwift
     - SwiftyUtils
@@ -29,11 +32,12 @@ CHECKOUT OPTIONS:
     :git: https://github.com/vikmeup/SCLAlertView-Swift.git
 
 SPEC CHECKSUMS:
+  Eureka: 859877ab1e85661b6b7e810015d430e937d9cc7d
   Realm: b845bf406e03b9c52a53e0de2394480288aa532a
   RealmSwift: b524ff07e4e92a34f4aecbe6ed1a613979a08bb9
   SCLAlertView: 776813fb1f62248965f37cb7edf4088ee6394460
   SwiftyUtils: 4c99e810e769063dbd5d4e83b486961a5d470aeb
 
-PODFILE CHECKSUM: 20ed2b33bcea1c262a3bc96f13d53eae4dbde768
+PODFILE CHECKSUM: b3add067ccdf292dd7f5b03fef25e212fb11265a
 
 COCOAPODS: 1.10.0.rc.1

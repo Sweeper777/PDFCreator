@@ -10,6 +10,7 @@ target 'PDFCreator' do
   pod 'SCLAlertView', :git => 'https://github.com/vikmeup/SCLAlertView-Swift.git'
   pod 'Realm'
   pod 'RealmSwift'
+  pod 'Eureka'
   target 'PDFCreatorTests' do
     inherit! :search_paths
     # Pods for testing
