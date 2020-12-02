@@ -12,6 +12,9 @@ class PDFEditorViewController : UICollectionViewController {
     override func viewDidLoad() {
         pagesCollectionView.delegate = self
         pagesCollectionView.dataSource = self
+        pagesCollectionView.dropDelegate = self
+        pagesCollectionView.dragDelegate = self
+        pagesCollectionView.dragInteractionEnabled = true
         pdfDocument = pdfFileObject.pdfDocument
         pagesCollectionView.register(UINib(nibName: "PDFPageCell", bundle: nil), forCellWithReuseIdentifier: "cell")
 
