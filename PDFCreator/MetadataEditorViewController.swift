@@ -15,3 +15,12 @@ class MetadataEditorViewController: FormViewController {
     }
 
 }
+
+let tagAuthor = PDFDocumentAttribute.authorAttribute.rawValue
+let tagCreationDate = PDFDocumentAttribute.creationDateAttribute.rawValue
+let tagCreator = PDFDocumentAttribute.creatorAttribute.rawValue
+let tagKeywords = PDFDocumentAttribute.keywordsAttribute.rawValue
+let tagModificationDate = PDFDocumentAttribute.modificationDateAttribute.rawValue
+let tagProducer = PDFDocumentAttribute.producerAttribute.rawValue
+let tagSubject = PDFDocumentAttribute.subjectAttribute.rawValue
+let tagTitle = PDFDocumentAttribute.titleAttribute.rawValue
