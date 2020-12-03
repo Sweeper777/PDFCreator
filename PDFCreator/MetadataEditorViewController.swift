@@ -12,6 +12,12 @@ class MetadataEditorViewController: FormViewController {
 
         pdfDocument = pdfFileObject.pdfDocument
         isEditing = true
+
+        form +++ Section()
+        <<< TextRow(tagAuthor) { row in
+            row.title = "Author"
+            row.value = pdfDocument.documentAttributes?[PDFDocumentAttribute.authorAttribute] as? String
+        }
     }
 
 }
