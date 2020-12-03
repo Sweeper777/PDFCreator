@@ -30,6 +30,10 @@ class MetadataEditorViewController: FormViewController {
             row.title = "Modification Date"
             row.value = pdfDocument.documentAttributes?[PDFDocumentAttribute.modificationDateAttribute] as? String
         }
+        <<< TextRow(tagProducer) { row in
+            row.title = "Producer"
+            row.value = pdfDocument.documentAttributes?[PDFDocumentAttribute.producerAttribute] as? String
+        }
     }
 
 }
