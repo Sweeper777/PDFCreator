@@ -61,6 +61,16 @@ class MetadataEditorViewController: FormViewController {
         }
     }
 
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+
+        let values = form.values()
+        let dict = Dictionary(uniqueKeysWithValues: [tagAuthor, tagCreator, tagCreationDate, tagModificationDate, tagProducer, tagSubject, tagTitle, tagKeywords]
+            .map { (PDFDocumentAttribute(rawValue: $0), values[$0].flatMap {$0}) })
+            .compactMapValues { $0 }
+        pdfDocument.documentAttributes = dict
+        pdfDocument.write(to: pdfFileObject.fileURL)
+    }
 }
 
 let tagAuthor = PDFDocumentAttribute.authorAttribute.rawValue
