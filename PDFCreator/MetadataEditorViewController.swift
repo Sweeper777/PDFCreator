@@ -43,6 +43,22 @@ class MetadataEditorViewController: FormViewController {
             row.value = pdfDocument.documentAttributes?[PDFDocumentAttribute.titleAttribute] as? String
         }
 
+        form +++ MultivaluedSection(multivaluedOptions: [.Reorder, .Insert, .Delete], header: "keywords") { section in
+            section.multivaluedRowToInsertAt = { _ in
+                TextRow { row in
+                    row.placeholder = "Keyword"
+                }
+            }
+            section.tag = tagKeywords
+            if let keywords = pdfDocument.documentAttributes?[PDFDocumentAttribute.keywordsAttribute] as? [String] {
+                for keyword in keywords {
+                    section <<< TextRow { row in
+                        row.value= keyword
+                        row.placeholder = "Keyword"
+                    }
+                }
+            }
+        }
     }
 
 }
