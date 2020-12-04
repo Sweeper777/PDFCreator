@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		25EF04E9F75A0981B8FAE9EB /* DataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25EF0323214C9F4DC68C9D3B /* DataManager.swift */; };
+		25EF082007EC5D34D3603FCF /* MetadataEditorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25EF018D8F522CF0F09F3C9D /* MetadataEditorViewController.swift */; };
 		25EF093889D1B6C15C4376B9 /* PDFViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25EF056AB3049C49514A5966 /* PDFViewController.swift */; };
 		25EF0996D33088F4048C5ACA /* PDFPageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25EF026F5AF9FD93D07E3659 /* PDFPageCell.swift */; };
 		25EF0C28368D969012FADDC8 /* PDFFileObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25EF0F5C5D58D1F9FAF93B3D /* PDFFileObject.swift */; };
@@ -45,6 +46,7 @@
 
 /* Begin PBXFileReference section */
 		048E13AE9042923634FF3113 /* Pods_PDFCreator_PDFCreatorUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_PDFCreator_PDFCreatorUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		25EF018D8F522CF0F09F3C9D /* MetadataEditorViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MetadataEditorViewController.swift; sourceTree = "<group>"; };
 		25EF0259F5744E2114A035C9 /* PDFEditorViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PDFEditorViewController.swift; sourceTree = "<group>"; };
 		25EF026F5AF9FD93D07E3659 /* PDFPageCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PDFPageCell.swift; sourceTree = "<group>"; };
 		25EF0323214C9F4DC68C9D3B /* DataManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DataManager.swift; sourceTree = "<group>"; };
@@ -141,6 +143,7 @@
 				25EF026F5AF9FD93D07E3659 /* PDFPageCell.swift */,
 				5A9A3C3D254D0C2D00C1EA31 /* PDFPageCell.xib */,
 				25EF056AB3049C49514A5966 /* PDFViewController.swift */,
+				25EF018D8F522CF0F09F3C9D /* MetadataEditorViewController.swift */,
 			);
 			path = PDFCreator;
 			sourceTree = "<group>";
@@ -433,6 +436,7 @@
 				25EF0D12855322B920740781 /* PDFEditorViewController.swift in Sources */,
 				25EF0996D33088F4048C5ACA /* PDFPageCell.swift in Sources */,
 				25EF093889D1B6C15C4376B9 /* PDFViewController.swift in Sources */,
+				25EF082007EC5D34D3603FCF /* MetadataEditorViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
