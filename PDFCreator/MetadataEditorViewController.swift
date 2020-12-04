@@ -38,6 +38,11 @@ class MetadataEditorViewController: FormViewController {
             row.title = "Subject"
             row.value = pdfDocument.documentAttributes?[PDFDocumentAttribute.subjectAttribute] as? String
         }
+        <<< TextRow(tagTitle) { row in
+            row.title = "Title"
+            row.value = pdfDocument.documentAttributes?[PDFDocumentAttribute.titleAttribute] as? String
+        }
+
     }
 
 }
