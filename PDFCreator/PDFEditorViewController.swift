@@ -5,8 +5,8 @@ import SCLAlertView
 
 class PDFEditorViewController : UICollectionViewController {
     @IBOutlet var pagesCollectionView: UICollectionView!
-    var pdfFileObject: PDFFileObject!
-    var pdfDocument: PDFDocument!
+    var pdfFileObject: PDFFileObject?
+    var pdfDocument: PDFDocument?
     @IBOutlet var moreButton: UIBarButtonItem!
 
     override func viewDidLoad() {
@@ -15,12 +15,12 @@ class PDFEditorViewController : UICollectionViewController {
         pagesCollectionView.dropDelegate = self
         pagesCollectionView.dragDelegate = self
         pagesCollectionView.dragInteractionEnabled = true
-        pdfDocument = pdfFileObject.pdfDocument
+        pdfDocument = pdfFileObject?.pdfDocument
         pagesCollectionView.register(UINib(nibName: "PDFPageCell", bundle: nil), forCellWithReuseIdentifier: "cell")
 
         setUpMoreMenu()
 
-        title = pdfFileObject.fileName
+        title = pdfFileObject?.fileName
     }
 
     @IBAction func addPage() {
@@ -73,6 +73,11 @@ class PDFEditorViewController : UICollectionViewController {
     }
 
     func renameTapped() {
+        guard let pdfFileObject = self.pdfFileObject else {
+            SCLAlertView().showError("Error", subTitle: "Please select a PDF file first!", closeButtonTitle: "OK")
+            return
+        }
+        
         func showNamePrompt(completion: @escaping (String) -> Void) {
             let nameInput = SCLAlertView()
             let textField = nameInput.addTextField()
@@ -86,7 +91,7 @@ class PDFEditorViewController : UICollectionViewController {
 
         showNamePrompt { newName in
             do {
-                try DataManager.shared.renamePDFObject(self.pdfFileObject, to: newName)
+                try DataManager.shared.renamePDFObject(pdfFileObject, to: newName)
                 self.title = newName
             } catch ImportError.fileAlreadyExists {
                 SCLAlertView().showError("Error", subTitle: "This name has already been used!", closeButtonTitle: "OK")
@@ -98,6 +103,10 @@ class PDFEditorViewController : UICollectionViewController {
     }
 
     func deleteFileTapped() {
+        guard let pdfFileObject = self.pdfFileObject else {
+            SCLAlertView().showError("Error", subTitle: "Please select a PDF file first!", closeButtonTitle: "OK")
+            return
+        }
         do {
             try DataManager.shared.deletePDFObject(pdfFileObject)
             navigationController?.popViewController(animated: true)
@@ -108,6 +117,10 @@ class PDFEditorViewController : UICollectionViewController {
     }
 
     func exportTapped() {
+        guard let pdfFileObject = self.pdfFileObject else {
+            SCLAlertView().showError("Error", subTitle: "Please select a PDF file first!", closeButtonTitle: "OK")
+            return
+        }
         let shareSheet = UIActivityViewController(activityItems: [pdfFileObject.fileURL], applicationActivities: nil)
         present(shareSheet, animated: true)
     }
@@ -117,6 +130,10 @@ class PDFEditorViewController : UICollectionViewController {
     }
 
     func rotateLeftTapped(pageIndex: Int) {
+        guard let pdfDocument = self.pdfDocument, let pdfFileObject = self.pdfFileObject else {
+            SCLAlertView().showError("Error", subTitle: "Please select a PDF file first!", closeButtonTitle: "OK")
+            return
+        }
         let page = pdfDocument.page(at: pageIndex)!
         page.rotation -= 90
         pdfDocument.write(to: pdfFileObject.fileURL)
@@ -124,6 +141,10 @@ class PDFEditorViewController : UICollectionViewController {
     }
 
     func rotateRightTapped(pageIndex: Int) {
+        guard let pdfDocument = self.pdfDocument, let pdfFileObject = self.pdfFileObject else {
+            SCLAlertView().showError("Error", subTitle: "Please select a PDF file first!", closeButtonTitle: "OK")
+            return
+        }
         let page = pdfDocument.page(at: pageIndex)!
         page.rotation += 90
         pdfDocument.write(to: pdfFileObject.fileURL)
@@ -131,6 +152,10 @@ class PDFEditorViewController : UICollectionViewController {
     }
 
     func deletePageTapped(pageIndex: Int) {
+        guard let pdfDocument = self.pdfDocument, let pdfFileObject = self.pdfFileObject else {
+            SCLAlertView().showError("Error", subTitle: "Please select a PDF file first!", closeButtonTitle: "OK")
+            return
+        }
         pdfDocument.removePage(at: pageIndex)
         pdfDocument.write(to: pdfFileObject.fileURL)
         collectionView.deleteItems(at: [IndexPath(item: pageIndex, section: 0)])
@@ -152,18 +177,32 @@ extension PDFEditorViewController {
     }
 
     public override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        pdfDocument.pageCount
+        pdfDocument?.pageCount ?? 0
     }
 
     public override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        guard let pdfDocument = self.pdfDocument else {
+            fatalError()
+        }
+        
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath) as! PDFPageCell
         cell.imageView.image = pdfDocument.page(at: indexPath.item)?.thumbnail(of: CGSize(width: 88, height: 88), for: .artBox)
+
+        cell.layer.shadowColor = UIColor.black.cgColor
+        cell.layer.shadowOffset = CGSize(width: 0, height: 2.0)
+        cell.layer.shadowRadius = 2.0
+        cell.layer.shadowOpacity = 0.5
+        cell.layer.masksToBounds = false
         return cell
     }
 
     override func collectionView(_ collectionView: UICollectionView, contextMenuConfigurationForItemAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
-        UIContextMenuConfiguration(identifier: nil) {
-            self.makePDFPagePreview(page: self.pdfDocument.page(at: indexPath.item)!)
+        guard let pdfDocument = self.pdfDocument else {
+            fatalError()
+        }
+        
+        return UIContextMenuConfiguration(identifier: nil) {
+            self.makePDFPagePreview(page: pdfDocument.page(at: indexPath.item)!)
         }
         actionProvider: { elements in
             UIMenu(children: [
@@ -204,15 +243,20 @@ extension PDFEditorViewController {
 
 extension PDFEditorViewController : UIDocumentPickerDelegate {
     public func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentAt url: URL) {
+        guard let pdfDocument = self.pdfDocument, let pdfFileObject = self.pdfFileObject else {
+            SCLAlertView().showError("Error", subTitle: "Please select a PDF file first!", closeButtonTitle: "OK")
+            return
+        }
+        
         if let pdf = PDFDocument(url: url) {
-            self.pdfDocument.appendDocument(pdf)
-            self.pdfDocument.write(to: pdfFileObject.fileURL)
+            pdfDocument.appendDocument(pdf)
+            pdfDocument.write(to: pdfFileObject.fileURL)
             let originalPageCount = pdfDocument.pageCount - pdf.pageCount
             pagesCollectionView.insertItems(at: (originalPageCount..<pdfDocument.pageCount).map { IndexPath(item: $0, section: 0) })
         } else if let image = UIImage(contentsOfFile: url.path),
             let page = PDFPage(image: image) {
-            self.pdfDocument.insert(page, at: self.pdfDocument.pageCount)
-            self.pdfDocument.write(to: pdfFileObject.fileURL)
+            pdfDocument.insert(page, at: pdfDocument.pageCount)
+            pdfDocument.write(to: pdfFileObject.fileURL)
         } else {
             SCLAlertView().showError("Error", subTitle: "Invalid file selected!", closeButtonTitle: "OK")
         }
@@ -221,13 +265,17 @@ extension PDFEditorViewController : UIDocumentPickerDelegate {
 
 extension PDFEditorViewController : PHPickerViewControllerDelegate {
     func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
+        guard let pdfDocument = self.pdfDocument, let pdfFileObject = self.pdfFileObject else {
+            SCLAlertView().showError("Error", subTitle: "Please select a PDF file first!", closeButtonTitle: "OK")
+            return
+        }
         results.first?.itemProvider.loadObject(ofClass: UIImage.self, completionHandler: { (object, error) in
             if let image = object as? UIImage,
                 let page = PDFPage(image: image) {
                 DispatchQueue.main.async {
-                    self.pdfDocument.insert(page, at: self.pdfDocument.pageCount)
-                    self.pdfDocument.write(to: self.pdfFileObject.fileURL)
-                    self.pagesCollectionView.insertItems(at: [IndexPath(item: self.pdfDocument.pageCount - 1, section: 0)])
+                    pdfDocument.insert(page, at: pdfDocument.pageCount)
+                    pdfDocument.write(to: pdfFileObject.fileURL)
+                    self.pagesCollectionView.insertItems(at: [IndexPath(item: pdfDocument.pageCount - 1, section: 0)])
                 }
             }
         })
@@ -237,6 +285,9 @@ extension PDFEditorViewController : PHPickerViewControllerDelegate {
 
 extension PDFEditorViewController : UICollectionViewDragDelegate, UICollectionViewDropDelegate {
     func collectionView(_ collectionView: UICollectionView, itemsForBeginning session: UIDragSession, at indexPath: IndexPath) -> [UIDragItem] {
+        guard let pdfDocument = self.pdfDocument else {
+            fatalError()
+        }
         let page = pdfDocument.page(at: indexPath.item)
         let itemProvider = NSItemProvider(item: nil, typeIdentifier: nil)
         let dragItem = UIDragItem(itemProvider: itemProvider)
@@ -252,7 +303,7 @@ extension PDFEditorViewController : UICollectionViewDragDelegate, UICollectionVi
     }
 
     func collectionView(_ collectionView: UICollectionView, performDropWith coordinator: UICollectionViewDropCoordinator) {
-        let destinationIndexPath = coordinator.destinationIndexPath ?? IndexPath(item: pdfDocument.pageCount - 1, section: 0)
+        let destinationIndexPath = coordinator.destinationIndexPath ?? IndexPath(item: pdfDocument!.pageCount - 1, section: 0)
         if coordinator.proposal.operation == .move {
             movePage(to: destinationIndexPath, with: coordinator)
         }
@@ -265,9 +316,9 @@ extension PDFEditorViewController : UICollectionViewDragDelegate, UICollectionVi
             return
         }
         collectionView.performBatchUpdates {
-            self.pdfDocument.removePage(at: sourceIndexPath.item)
-            self.pdfDocument.insert(pageToInsert, at: destinationIndexPath.item)
-            self.pdfDocument.write(to: self.pdfFileObject.fileURL)
+            self.pdfDocument!.removePage(at: sourceIndexPath.item)
+            self.pdfDocument!.insert(pageToInsert, at: destinationIndexPath.item)
+            self.pdfDocument!.write(to: self.pdfFileObject!.fileURL)
 
             self.collectionView.deleteItems(at: [sourceIndexPath])
             self.collectionView.insertItems(at: [destinationIndexPath])
