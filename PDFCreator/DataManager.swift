@@ -36,6 +36,11 @@ class DataManager {
         if existingFiles.count > 0 {
             throw ImportError.fileAlreadyExists
         }
+        if document.documentAttributes == nil {
+            document.documentAttributes = [PDFDocumentAttribute.creatorAttribute: "PDF Creator"]
+        } else {
+            document.documentAttributes?[PDFDocumentAttribute.creatorAttribute] = "PDF Creator"
+        }
         try realm.write {
             let pdfObj = PDFFileObject()
             pdfObj.fileName = name
