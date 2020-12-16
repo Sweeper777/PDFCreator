@@ -53,7 +53,7 @@ class MetadataEditorViewController: FormViewController {
             if let keywords = pdfDocument.documentAttributes?[PDFDocumentAttribute.keywordsAttribute] as? [String] {
                 for keyword in keywords {
                     section <<< TextRow { row in
-                        row.value= keyword
+                        row.value = keyword
                         row.placeholder = "Keyword"
                     }
                 }
