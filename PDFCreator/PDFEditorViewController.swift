@@ -13,11 +13,12 @@ class PDFEditorViewController : UICollectionViewController {
     @IBOutlet var pagesCollectionView: UICollectionView!
     var pdfFileObject: PDFFileObject?
     var pdfDocument: PDFDocument?
+    lazy var dataSource = makeDataSource()
     @IBOutlet var moreButton: UIBarButtonItem!
 
     override func viewDidLoad() {
         pagesCollectionView.delegate = self
-        pagesCollectionView.dataSource = self
+        pagesCollectionView.dataSource = dataSource
         pagesCollectionView.dropDelegate = self
         pagesCollectionView.dragDelegate = self
         pagesCollectionView.dragInteractionEnabled = true
@@ -41,6 +42,16 @@ class PDFEditorViewController : UICollectionViewController {
             cell.layer.masksToBounds = false
             return cell
         }
+    }
+    
+    func applySnapshot(animated: Bool = false) {
+        guard let pdfDocument = pdfDocument else {
+            return
+        }
+        var snapshot = Snapshot()
+        snapshot.appendSections([.main])
+        snapshot.appendItems((0..<pdfDocument.pageCount).compactMap(pdfDocument.page(at:)))
+        dataSource.apply(snapshot, animatingDifferences: animated)
     }
 
     @IBAction func addPage() {
