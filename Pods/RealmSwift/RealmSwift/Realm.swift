@@ -42,7 +42,7 @@ import Realm.Private
  done, trying to use the same instance in multiple blocks dispatch to the same
  queue may fail as queues are not always run on the same thread.
  */
-public struct Realm {
+@frozen public struct Realm {
 
     // MARK: Properties
 
@@ -131,11 +131,39 @@ public struct Realm {
     @discardableResult
     public static func asyncOpen(configuration: Realm.Configuration = .defaultConfiguration,
                                  callbackQueue: DispatchQueue = .main,
-                                 callback: @escaping (Realm?, Swift.Error?) -> Void) -> AsyncOpenTask {
-        return AsyncOpenTask(rlmTask: RLMRealm.asyncOpen(with: configuration.rlmConfiguration, callbackQueue: callbackQueue) { rlmRealm, error in
-            callback(rlmRealm.flatMap(Realm.init), error)
-        })
+                                 callback: @escaping (Result<Realm, Swift.Error>) -> Void) -> AsyncOpenTask {
+        return AsyncOpenTask(rlmTask: RLMRealm.asyncOpen(with: configuration.rlmConfiguration, callbackQueue: callbackQueue, callback: { rlmRealm, error in
+            if let realm = rlmRealm.flatMap(Realm.init) {
+                callback(.success(realm))
+            } else {
+                callback(.failure(error ?? Realm.Error.callFailed))
+            }
+        }))
     }
+
+    #if !(os(iOS) && (arch(i386) || arch(arm)))
+    /**
+     Asynchronously open a Realm and deliver it to a block on the given queue.
+
+     Opening a Realm asynchronously will perform all work needed to get the Realm to
+     a usable state (such as running potentially time-consuming migrations) on a
+     background thread before dispatching to the given queue. In addition,
+     synchronized Realms wait for all remote content available at the time the
+     operation began to be downloaded and available locally.
+
+     The Realm passed to the publisher is confined to the callback
+     queue as if `Realm(configuration:queue:)` was used.
+
+     - parameter configuration: A configuration object to use when opening the Realm.
+     - parameter callbackQueue: The dispatch queue on which the AsyncOpenTask should be run.
+     - returns: A publisher. If the Realm was successfully opened, it will be received by the subscribers.
+                Otherwise, a `Swift.Error` describing what went wrong will be passed upstream instead.
+     */
+    @available(OSX 10.15, watchOS 6.0, iOS 13.0, iOSApplicationExtension 13.0, OSXApplicationExtension 10.15, tvOS 13.0, *)
+    public static func asyncOpen(configuration: Realm.Configuration = .defaultConfiguration) -> RealmPublishers.AsyncOpenPublisher {
+        return RealmPublishers.AsyncOpenPublisher(configuration: configuration)
+    }
+    #endif
 
     /**
      A task object which can be used to observe or cancel an async open.
@@ -147,8 +175,8 @@ public struct Realm {
      download via the sync session as the sync session itself is created
      asynchronously, and may not exist yet when Realm.asyncOpen() returns.
      */
-    public struct AsyncOpenTask {
-        fileprivate let rlmTask: RLMAsyncOpenTask
+    @frozen public struct AsyncOpenTask {
+        internal let rlmTask: RLMAsyncOpenTask
 
         /**
          Cancel the asynchronous open.
@@ -343,7 +371,7 @@ public struct Realm {
     /**
      What to do when an object being added to or created in a Realm has a primary key that already exists.
      */
-    public enum UpdatePolicy: Int {
+    @frozen public enum UpdatePolicy: Int {
         /**
          Throw an exception. This is the default when no policy is specified for `add()` or `create()`.
 
@@ -540,7 +568,7 @@ public struct Realm {
 
      - parameter object: The object to be deleted.
      */
-    public func delete(_ object: Object) {
+    public func delete(_ object: ObjectBase) {
         RLMDeleteObjectFromRealm(object, rlmRealm)
     }
 
@@ -559,7 +587,7 @@ public struct Realm {
                             `Results<Object>`, or any other Swift `Sequence` whose
                             elements are `Object`s (subject to the caveats above).
      */
-    public func delete<S: Sequence>(_ objects: S) where S.Iterator.Element: Object {
+    public func delete<S: Sequence>(_ objects: S) where S.Iterator.Element: ObjectBase {
         for obj in objects {
             delete(obj)
         }
@@ -574,8 +602,21 @@ public struct Realm {
 
      :nodoc:
      */
-    public func delete<Element: Object>(_ objects: List<Element>) {
-        rlmRealm.deleteObjects(objects._rlmArray)
+    public func delete<Element: ObjectBase>(_ objects: List<Element>) {
+        rlmRealm.deleteObjects(objects._rlmCollection)
+    }
+
+    /**
+     Deletes zero or more objects from the Realm.
+
+     - warning: This method may only be called during a write transaction.
+
+     - parameter objects: A map of objects to delete.
+
+     :nodoc:
+     */
+    public func delete<Key: _MapKey, Value: ObjectBase>(_ map: Map<Key, Value?>) {
+        rlmRealm.deleteObjects(map._rlmCollection)
     }
 
     /**
@@ -587,7 +628,7 @@ public struct Realm {
 
      :nodoc:
      */
-    public func delete<Element: Object>(_ objects: Results<Element>) {
+    public func delete<Element: ObjectBase>(_ objects: Results<Element>) {
         rlmRealm.deleteObjects(objects.rlmResults)
     }
 
@@ -780,6 +821,16 @@ public struct Realm {
     }
 
     /**
+     Returns a live (mutable) reference of this Realm.
+
+     All objects and collections read from the returned Realm reference will no longer be frozen.
+     Will return self if called on a Realm that is not already frozen.
+     */
+    public func thaw() -> Realm {
+        return isFrozen ? Realm(rlmRealm.thaw()) : self
+    }
+
+    /**
      Returns a frozen (immutable) snapshot of the given object.
 
      The frozen copy is an immutable object which contains the same data as the given object
@@ -790,8 +841,18 @@ public struct Realm {
      transaction on the Realm may result in the Realm file growing to large sizes. See
      `Realm.Configuration.maximumNumberOfActiveVersions` for more information.
      */
-    public func freeze<T: Object>(_ obj: T) -> T {
+    public func freeze<T: ObjectBase>(_ obj: T) -> T {
         return RLMObjectFreeze(obj) as! T
+    }
+
+    /**
+     Returns a live (mutable) reference of this object.
+
+     This method creates a managed accessor to a live copy of the same frozen object.
+     Will return self if called on an already live object.
+     */
+    public func thaw<T: ObjectBase>(_ obj: T) -> T? {
+        return RLMObjectThaw(obj) as? T
     }
 
     /**
@@ -828,8 +889,7 @@ public struct Realm {
      and a new read transaction is implicitly begun the next time data is read from the Realm.
 
      Calling this method multiple times in a row without reading any data from the
-     Realm, or before ever reading any data from the Realm, is a no-op. This method
-     may not be called on a read-only Realm.
+     Realm, or before ever reading any data from the Realm, is a no-op.
      */
     public func invalidate() {
         rlmRealm.invalidate()
@@ -913,7 +973,7 @@ extension Realm: Equatable {
 
 extension Realm {
     /// A notification indicating that changes were made to a Realm.
-    public enum Notification: String {
+    @frozen public enum Notification: String {
         /**
          This notification is posted when the data in a Realm has changed.
 
@@ -940,3 +1000,74 @@ extension Realm {
 
 /// The type of a block to run for notification purposes when the data in a Realm is modified.
 public typealias NotificationBlock = (_ notification: Realm.Notification, _ realm: Realm) -> Void
+
+#if swift(>=5.5) && canImport(_Concurrency)
+@available(macOS 12.0, tvOS 15.0, iOS 15.0, watchOS 8.0, *)
+extension Realm {
+    /// Options for when to download all data from the server before opening
+    /// a synchronized Realm.
+    @frozen public enum OpenBehavior {
+        /// Immediately return the Realm as if the synchronous initializer was
+        /// used. If this is the first time that the Realm has been opened on
+        /// this device, the Realm file will initially be empty. Synchronized
+        /// Realms will contact the server and download new data in the
+        /// background.
+        case never
+        /// Always open the Realm asynchronously and download all data from the
+        /// server before returning the Realm. This mode will fail to open the
+        /// Realm if the device is currently offline.
+        case always
+        /// Open the Realm asynchronously the first time it is opened on the
+        /// current device, and then synchronously afterwards. This mode is
+        /// suitable if you wish to wait to download the server-side data the
+        /// first time your app is launched on each device, but afterwards
+        /// support offline launches using the existing local data.
+        ///
+        /// Note that if .once is used multiple times simultaneously then calls
+        /// after the first may see partial local data from the first call and
+        /// not wait for the download.
+        case once
+    }
+    /**
+     Obtains a `Realm` instance with the given configuration, possibly asynchronously.
+     By default this simply returns the Realm instance exactly as if the
+     synchronous initializer was used. It optionally can instead open the Realm
+     asynchronously, performing all work needed to get the Realm to a usable
+     state on a background thread. For local Realms, this means that migrations
+     will be run in the background, and for synchronized Realms all data will
+     be downloaded from the server before the Realm is returned.
+     - parameter configuration: A configuration object to use when opening the Realm.
+     - parameter downloadBeforeOpen: When opening the Realm should first download
+     all data from the server.
+     - throws: An `NSError` if the Realm could not be initialized.
+     - returns: An open Realm.
+     */
+    @MainActor
+    public init(configuration: Realm.Configuration = .defaultConfiguration,
+                downloadBeforeOpen: OpenBehavior = .never) async throws {
+        var rlmRealm: RLMRealm?
+        switch downloadBeforeOpen {
+        case .never:
+            break
+        case .once:
+            if !Realm.fileExists(for: configuration) {
+                fallthrough
+            }
+        case .always:
+            rlmRealm = try await withCheckedThrowingContinuation { continuation in
+                RLMRealm.asyncOpen(with: configuration.rlmConfiguration, callbackQueue: .main) { (realm, error) in
+                    if let error = error {
+                        continuation.resume(with: .failure(error))
+                    } else {
+                        continuation.resume(with: .success(realm!))
+                    }
+                }
+            }
+        }
+        if rlmRealm == nil {
+            rlmRealm = try RLMRealm(configuration: configuration.rlmConfiguration)
+        }
+        self.init(rlmRealm!)
+    }
+}
+#endif // swift(>=5.5)

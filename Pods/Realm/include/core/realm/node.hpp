@@ -24,6 +24,8 @@
 
 namespace realm {
 
+class Mixed;
+
 /// Special index value. It has various meanings depending on
 /// context. It is returned by some search functions to indicate 'not
 /// found'. It is similar in function to std::string::npos.
@@ -45,14 +47,10 @@ const size_t not_found = npos;
 /// modified.
 class ArrayParent {
 public:
-    virtual ~ArrayParent() noexcept
-    {
-    }
+    virtual ~ArrayParent() noexcept {}
 
     virtual ref_type get_child_ref(size_t child_ndx) const noexcept = 0;
     virtual void update_child_ref(size_t child_ndx, ref_type new_ref) = 0;
-    // Used only by Array::to_dot().
-    virtual std::pair<ref_type, size_t> get_to_dot_parent(size_t ndx_in_parent) const = 0;
 };
 
 /// Provides access to individual array nodes of the database.
@@ -116,9 +114,7 @@ public:
     {
     }
 
-    virtual ~Node()
-    {
-    }
+    virtual ~Node() {}
 
     /**************************** Initializers *******************************/
 
@@ -129,7 +125,6 @@ public:
         char* header = mem.get_addr();
         m_ref = mem.get_ref();
         m_data = get_data_from_header(header);
-        m_width = get_width_from_header(header);
         m_size = get_size_from_header(header);
 
         return header;
@@ -202,13 +197,6 @@ public:
         REALM_ASSERT_DEBUG(m_parent);
         ref_type ref = m_parent->get_child_ref(m_ndx_in_parent);
         return ref;
-    }
-
-    /// The meaning of 'width' depends on the context in which this
-    /// array is used.
-    size_t get_width() const noexcept
-    {
-        return m_width;
     }
 
     /***************************** modifiers *********************************/
@@ -287,8 +275,7 @@ protected:
 
     size_t m_ref;
     Allocator& m_alloc;
-    size_t m_size = 0;         // Number of elements currently stored.
-    uint_least8_t m_width = 0; // Size of an element (meaning depend on type of array).
+    size_t m_size = 0; // Number of elements currently stored.
 
 #if REALM_ENABLE_MEMDEBUG
     // If m_no_relocation is false, then copy_on_write() will always relocate this array, regardless if it's
@@ -358,6 +345,7 @@ private:
 };
 
 class Spec;
+class Mixed;
 
 /// Base class for all nodes holding user data
 class ArrayPayload {
@@ -365,13 +353,12 @@ public:
     virtual ~ArrayPayload();
     virtual void init_from_ref(ref_type) noexcept = 0;
     virtual void set_parent(ArrayParent* parent, size_t ndx_in_parent) noexcept = 0;
+    virtual Mixed get_any(size_t ndx) const = 0;
     virtual bool need_spec() const
     {
         return false;
     }
-    virtual void set_spec(Spec*, size_t) const
-    {
-    }
+    virtual void set_spec(Spec*, size_t) const {}
 };
 
 
@@ -390,6 +377,6 @@ inline void Node::init_header(char* header, bool is_inner_bptree_node, bool has_
     set_size_in_header(size, header);
     set_capacity_in_header(capacity, header);
 }
-}
+} // namespace realm
 
 #endif /* REALM_NODE_HPP */

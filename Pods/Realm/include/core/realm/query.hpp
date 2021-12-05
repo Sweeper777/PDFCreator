@@ -34,12 +34,14 @@
 #include <pthread.h>
 #endif
 
+#include <realm/aggregate_ops.hpp>
 #include <realm/obj_list.hpp>
 #include <realm/table_ref.hpp>
 #include <realm/binary_data.hpp>
 #include <realm/timestamp.hpp>
 #include <realm/handover_defs.hpp>
 #include <realm/util/serializer.hpp>
+#include <realm/column_type_traits.hpp>
 
 namespace realm {
 
@@ -48,7 +50,7 @@ namespace realm {
 class ParentNode;
 class Table;
 class TableView;
-class ConstTableView;
+class TableView;
 class Array;
 class Expression;
 class Group;
@@ -81,10 +83,10 @@ struct QueryGroup {
 
 class Query final {
 public:
-    Query(ConstTableRef table, ConstTableView* tv = nullptr);
-    Query(ConstTableRef table, std::unique_ptr<ConstTableView>);
-    Query(ConstTableRef table, const LnkLst& list);
-    Query(ConstTableRef table, LnkLstPtr&& list);
+    Query(ConstTableRef table, TableView* tv = nullptr);
+    Query(ConstTableRef table, std::unique_ptr<TableView>);
+    Query(ConstTableRef table, const ObjList& list);
+    Query(ConstTableRef table, LinkCollectionPtr&& list_ptr);
     Query();
     Query(std::unique_ptr<Expression>);
     ~Query() noexcept;
@@ -97,6 +99,8 @@ public:
 
     // Find links that point to a specific target row
     Query& links_to(ColKey column_key, ObjKey target_key);
+    // Find links that point to a specific object (for Mixed columns)
+    Query& links_to(ColKey column_key, ObjLink target_link);
     // Find links that point to specific target objects
     Query& links_to(ColKey column_key, const std::vector<ObjKey>& target_obj);
 
@@ -122,14 +126,6 @@ public:
     Query& less_equal(ColKey column_key, int value);
     Query& between(ColKey column_key, int from, int to);
 
-    // Conditions: 2 int columns
-    Query& equal_int(ColKey column_key1, ColKey column_key2);
-    Query& not_equal_int(ColKey column_key1, ColKey column_key2);
-    Query& greater_int(ColKey column_key1, ColKey column_key2);
-    Query& less_int(ColKey column_key1, ColKey column_key2);
-    Query& greater_equal_int(ColKey column_key1, ColKey column_key2);
-    Query& less_equal_int(ColKey column_key1, ColKey column_key2);
-
     // Conditions: float
     Query& equal(ColKey column_key, float value);
     Query& not_equal(ColKey column_key, float value);
@@ -138,14 +134,6 @@ public:
     Query& less(ColKey column_key, float value);
     Query& less_equal(ColKey column_key, float value);
     Query& between(ColKey column_key, float from, float to);
-
-    // Conditions: 2 float columns
-    Query& equal_float(ColKey column_key1, ColKey column_key2);
-    Query& not_equal_float(ColKey column_key1, ColKey column_key2);
-    Query& greater_float(ColKey column_key1, ColKey column_key2);
-    Query& greater_equal_float(ColKey column_key1, ColKey column_key2);
-    Query& less_float(ColKey column_key1, ColKey column_key2);
-    Query& less_equal_float(ColKey column_key1, ColKey column_key2);
 
     // Conditions: double
     Query& equal(ColKey column_key, double value);
@@ -156,14 +144,6 @@ public:
     Query& less_equal(ColKey column_key, double value);
     Query& between(ColKey column_key, double from, double to);
 
-    // Conditions: 2 double columns
-    Query& equal_double(ColKey column_key1, ColKey column_key2);
-    Query& not_equal_double(ColKey column_key1, ColKey column_key2);
-    Query& greater_double(ColKey column_key1, ColKey column_key2);
-    Query& greater_equal_double(ColKey column_key1, ColKey column_key2);
-    Query& less_double(ColKey column_key1, ColKey column_key2);
-    Query& less_equal_double(ColKey column_key1, ColKey column_key2);
-
     // Conditions: timestamp
     Query& equal(ColKey column_key, Timestamp value);
     Query& not_equal(ColKey column_key, Timestamp value);
@@ -171,6 +151,43 @@ public:
     Query& greater_equal(ColKey column_key, Timestamp value);
     Query& less_equal(ColKey column_key, Timestamp value);
     Query& less(ColKey column_key, Timestamp value);
+
+    // Conditions: ObjectId
+    Query& equal(ColKey column_key, ObjectId value);
+    Query& not_equal(ColKey column_key, ObjectId value);
+    Query& greater(ColKey column_key, ObjectId value);
+    Query& greater_equal(ColKey column_key, ObjectId value);
+    Query& less_equal(ColKey column_key, ObjectId value);
+    Query& less(ColKey column_key, ObjectId value);
+
+    // Conditions: UUID
+    Query& equal(ColKey column_key, UUID value);
+    Query& not_equal(ColKey column_key, UUID value);
+    Query& greater(ColKey column_key, UUID value);
+    Query& greater_equal(ColKey column_key, UUID value);
+    Query& less_equal(ColKey column_key, UUID value);
+    Query& less(ColKey column_key, UUID value);
+
+    // Conditions: Decimal128
+    Query& equal(ColKey column_key, Decimal128 value);
+    Query& not_equal(ColKey column_key, Decimal128 value);
+    Query& greater(ColKey column_key, Decimal128 value);
+    Query& greater_equal(ColKey column_key, Decimal128 value);
+    Query& less_equal(ColKey column_key, Decimal128 value);
+    Query& less(ColKey column_key, Decimal128 value);
+    Query& between(ColKey column_key, Decimal128 from, Decimal128 to);
+
+    // Conditions: Mixed
+    Query& equal(ColKey column_key, Mixed value, bool case_sensitive = true);
+    Query& not_equal(ColKey column_key, Mixed value, bool case_sensitive = true);
+    Query& greater(ColKey column_key, Mixed value);
+    Query& greater_equal(ColKey column_key, Mixed value);
+    Query& less(ColKey column_key, Mixed value);
+    Query& less_equal(ColKey column_key, Mixed value);
+    Query& begins_with(ColKey column_key, Mixed value, bool case_sensitive = true);
+    Query& ends_with(ColKey column_key, Mixed value, bool case_sensitive = true);
+    Query& contains(ColKey column_key, Mixed value, bool case_sensitive = true);
+    Query& like(ColKey column_key, Mixed value, bool case_sensitive = true);
 
     // Conditions: size
     Query& size_equal(ColKey column_key, int64_t value);
@@ -206,6 +223,15 @@ public:
     Query& ends_with(ColKey column_key, BinaryData value, bool case_sensitive = true);
     Query& contains(ColKey column_key, BinaryData value, bool case_sensitive = true);
     Query& like(ColKey column_key, BinaryData b, bool case_sensitive = true);
+
+    // Conditions: untyped column vs column comparison
+    // if the column types are not comparable, an exception is thrown
+    Query& equal(ColKey column_key1, ColKey column_key2);
+    Query& less(ColKey column_key1, ColKey column_key2);
+    Query& less_equal(ColKey column_key1, ColKey column_key2);
+    Query& greater(ColKey column_key1, ColKey column_key2);
+    Query& greater_equal(ColKey column_key1, ColKey column_key2);
+    Query& not_equal(ColKey column_key1, ColKey column_key2);
 
     // Negation
     Query& Not();
@@ -244,6 +270,14 @@ public:
     double minimum_double(ColKey column_key, ObjKey* return_ndx = nullptr) const;
     Timestamp maximum_timestamp(ColKey column_key, ObjKey* return_ndx = nullptr);
     Timestamp minimum_timestamp(ColKey column_key, ObjKey* return_ndx = nullptr);
+    Decimal128 sum_decimal128(ColKey column_key) const;
+    Decimal128 maximum_decimal128(ColKey column_key, ObjKey* return_ndx = nullptr) const;
+    Decimal128 minimum_decimal128(ColKey column_key, ObjKey* return_ndx = nullptr) const;
+    Decimal128 average_decimal128(ColKey column_key, size_t* resultcount = nullptr) const;
+    Decimal128 sum_mixed(ColKey column_key) const;
+    Mixed maximum_mixed(ColKey column_key, ObjKey* return_ndx = nullptr) const;
+    Mixed minimum_mixed(ColKey column_key, ObjKey* return_ndx = nullptr) const;
+    Decimal128 average_mixed(ColKey column_key, size_t* resultcount = nullptr) const;
 
     // Deletion
     size_t remove();
@@ -251,9 +285,14 @@ public:
 #if REALM_MULTITHREAD_QUERY
     // Multi-threading
     TableView find_all_multi(size_t start = 0, size_t end = size_t(-1));
-    ConstTableView find_all_multi(size_t start = 0, size_t end = size_t(-1)) const;
+    TableView find_all_multi(size_t start = 0, size_t end = size_t(-1)) const;
     int set_threads(unsigned int threadcount);
 #endif
+
+    const ConstTableRef& get_table() const noexcept
+    {
+        return m_table;
+    }
 
     ConstTableRef& get_table()
     {
@@ -268,6 +307,13 @@ public:
         return !m_view;
     }
 
+    // Get the ObjKey of the object which owns the restricting view, or null
+    // if that is not applicable
+    ObjKey view_owner_obj_key() const noexcept
+    {
+        return m_view ? m_view->get_owning_obj().get_key() : ObjKey{};
+    }
+
     // Calls sync_if_needed on the restricting view, if present.
     // Returns the current version of the table(s) this query depends on,
     // or empty vector if the query is not associated with a table.
@@ -275,10 +321,13 @@ public:
 
     std::string validate();
 
-    std::string get_description() const;
+    std::string get_description(const std::string& class_prefix = "") const;
     std::string get_description(util::serializer::SerialisationState& state) const;
 
-    bool eval_object(ConstObj& obj) const;
+    Query& set_ordering(std::unique_ptr<DescriptorOrdering> ordering);
+    std::shared_ptr<DescriptorOrdering> get_ordering();
+
+    bool eval_object(const Obj& obj) const;
 
 private:
     void create();
@@ -287,6 +336,7 @@ private:
     size_t find_internal(size_t start = 0, size_t end = size_t(-1)) const;
     void handle_pending_not();
     void set_table(TableRef tr);
+
 public:
     std::unique_ptr<Query> clone_for_handover(Transaction* tr, PayloadPolicy policy) const
     {
@@ -302,41 +352,25 @@ public:
 private:
     void add_expression_node(std::unique_ptr<Expression>);
 
-    template <class ColumnType>
-    Query& equal(ColKey column_key1, ColKey column_key2);
-
-    template <class ColumnType>
-    Query& less(ColKey column_key1, ColKey column_key2);
-
-    template <class ColumnType>
-    Query& less_equal(ColKey column_key1, ColKey column_key2);
-
-    template <class ColumnType>
-    Query& greater(ColKey column_key1, ColKey column_key2);
-
-    template <class ColumnType>
-    Query& greater_equal(ColKey column_key1, ColKey column_key2);
-
-    template <class ColumnType>
-    Query& not_equal(ColKey column_key1, ColKey column_key2);
-
     template <typename TConditionFunction, class T>
     Query& add_condition(ColKey column_key, T value);
 
     template <typename TConditionFunction>
     Query& add_size_condition(ColKey column_key, int64_t value);
 
-    template <typename T, bool Nullable>
-    double average(ColKey column_key, size_t* resultcount = nullptr) const;
+    template <typename T,
+              typename R = typename aggregate_operations::Average<typename util::RemoveOptional<T>::type>::ResultType>
+    R average(ColKey column_key, size_t* resultcount = nullptr) const;
 
-    template <Action action, typename T, typename R>
-    R aggregate(ColKey column_key, size_t* resultcount = nullptr, ObjKey* return_ndx = nullptr) const;
+    template <typename T>
+    void aggregate(QueryStateBase& st, ColKey column_key, size_t* resultcount = nullptr,
+                   ObjKey* return_ndx = nullptr) const;
 
     size_t find_best_node(ParentNode* pn) const;
     void aggregate_internal(ParentNode* pn, QueryStateBase* st, size_t start, size_t end,
                             ArrayPayload* source_column) const;
 
-    void find_all(ConstTableView& tv, size_t start = 0, size_t end = size_t(-1), size_t limit = size_t(-1)) const;
+    void find_all(TableView& tv, size_t start = 0, size_t end = size_t(-1), size_t limit = size_t(-1)) const;
     size_t do_count(size_t limit = size_t(-1)) const;
     void delete_nodes() noexcept;
 
@@ -353,8 +387,9 @@ private:
     void add_node(std::unique_ptr<ParentNode>);
 
     friend class Table;
-    friend class ConstTableView;
+    friend class TableView;
     friend class SubQueryCount;
+    friend class PrimitiveListCount;
     friend class metrics::QueryInfo;
 
     std::string error_code;
@@ -365,14 +400,19 @@ private:
     TableRef m_table;
 
     // points to the base class of the restricting view. If the restricting
-    // view is a link view, m_source_link_list is non-zero. If it is a table view,
+    // view is a link view, m_source_collection is non-zero. If it is a table view,
     // m_source_table_view is non-zero.
     ObjList* m_view = nullptr;
 
     // At most one of these can be non-zero, and if so the non-zero one indicates the restricting view.
-    LnkLstPtr m_source_link_list;                  // link lists are owned by the query.
-    ConstTableView* m_source_table_view = nullptr; // table views are not refcounted, and not owned by the query.
-    std::unique_ptr<ConstTableView> m_owned_source_table_view; // <--- except when indicated here
+    //
+    // m_source_collection is a pointer to a collection which must also be a ObjList*
+    // this includes: LnkLst, LnkSet, and DictionaryLinkValues. It cannot be a list of primitives because
+    // it is used to populate a query through a collection of objects and there are asserts for this.
+    LinkCollectionPtr m_source_collection;         // collections are owned by the query.
+    TableView* m_source_table_view = nullptr;      // table views are not refcounted, and not owned by the query.
+    std::unique_ptr<TableView> m_owned_source_table_view; // <--- except when indicated here
+    std::shared_ptr<DescriptorOrdering> m_ordering;
 };
 
 // Implementation:
