@@ -3,6 +3,12 @@ import PDFKit
 import PhotosUI
 import SCLAlertView
 
+enum PDFCollectionViewSection {
+    case main
+}
+typealias DataSource = UICollectionViewDiffableDataSource<PDFCollectionViewSection, PDFPage>
+typealias Snapshot = NSDiffableDataSourceSnapshot<PDFCollectionViewSection, PDFPage>
+
 class PDFEditorViewController : UICollectionViewController {
     @IBOutlet var pagesCollectionView: UICollectionView!
     var pdfFileObject: PDFFileObject?
@@ -21,6 +27,20 @@ class PDFEditorViewController : UICollectionViewController {
         setUpMoreMenu()
 
         title = pdfFileObject?.fileName
+    }
+    
+    func makeDataSource() -> DataSource {
+        DataSource(collectionView: pagesCollectionView) { collectionView, indexPath, item in
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath) as! PDFPageCell
+            cell.imageView.image = item.thumbnail(of: CGSize(width: 88, height: 88), for: .artBox)
+
+            cell.layer.shadowColor = UIColor.black.cgColor
+            cell.layer.shadowOffset = CGSize(width: 0, height: 2.0)
+            cell.layer.shadowRadius = 2.0
+            cell.layer.shadowOpacity = 0.5
+            cell.layer.masksToBounds = false
+            return cell
+        }
     }
 
     @IBAction func addPage() {
