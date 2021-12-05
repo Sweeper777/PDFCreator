@@ -21,6 +21,7 @@ class PDFEditorViewController : UICollectionViewController {
         pagesCollectionView.dataSource = dataSource
         pagesCollectionView.dropDelegate = self
         pagesCollectionView.dragDelegate = self
+        pagesCollectionView.collectionViewLayout = makeLayout()
         pagesCollectionView.dragInteractionEnabled = true
         pdfDocument = pdfFileObject?.pdfDocument
         pagesCollectionView.register(UINib(nibName: "PDFPageCell", bundle: nil), forCellWithReuseIdentifier: "cell")
@@ -44,6 +45,25 @@ class PDFEditorViewController : UICollectionViewController {
             cell.layer.masksToBounds = false
             return cell
         }
+    }
+    
+    func makeLayout() -> UICollectionViewLayout {
+        let item = NSCollectionLayoutItem(layoutSize: .init(
+            widthDimension: .fractionalWidth(1/3),
+            heightDimension: .fractionalHeight(1)
+        ))
+        
+        let group = NSCollectionLayoutGroup.horizontal(
+            layoutSize: .init(
+                widthDimension: .fractionalWidth(1),
+                heightDimension: .fractionalWidth(1/3)),
+            subitems: [item]
+        )
+        let section = NSCollectionLayoutSection(group: group)
+        section.contentInsets = .init(top: 16, leading: 16, bottom: 16, trailing: 16)
+        return UICollectionViewCompositionalLayout(
+            section: section
+        )
     }
     
     func applySnapshot(animated: Bool = false) {
