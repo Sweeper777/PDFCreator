@@ -37,7 +37,7 @@ class PDFEditorViewController : UICollectionViewController {
     }
 
     func importFromFiles() {
-        let documentPicker = UIDocumentPickerViewController(documentTypes: ["com.adobe.pdf", "public.image"], in: .import)
+        let documentPicker = UIDocumentPickerViewController(forOpeningContentTypes: [.pdf, .image])
         documentPicker.allowsMultipleSelection = false
         documentPicker.delegate = self
         present(documentPicker, animated: true)
