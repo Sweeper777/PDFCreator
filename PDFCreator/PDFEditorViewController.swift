@@ -28,6 +28,8 @@ class PDFEditorViewController : UICollectionViewController {
         setUpMoreMenu()
 
         title = pdfFileObject?.fileName
+        
+        applySnapshot()
     }
     
     func makeDataSource() -> DataSource {
@@ -168,7 +170,7 @@ class PDFEditorViewController : UICollectionViewController {
         let page = pdfDocument.page(at: pageIndex)!
         page.rotation -= 90
         pdfDocument.write(to: pdfFileObject.fileURL)
-        collectionView.reloadItems(at: [IndexPath(item: pageIndex, section: 0)])
+        applySnapshot()
     }
 
     func rotateRightTapped(pageIndex: Int) {
@@ -179,7 +181,7 @@ class PDFEditorViewController : UICollectionViewController {
         let page = pdfDocument.page(at: pageIndex)!
         page.rotation += 90
         pdfDocument.write(to: pdfFileObject.fileURL)
-        collectionView.reloadItems(at: [IndexPath(item: pageIndex, section: 0)])
+        applySnapshot()
     }
 
     func deletePageTapped(pageIndex: Int) {
@@ -189,7 +191,7 @@ class PDFEditorViewController : UICollectionViewController {
         }
         pdfDocument.removePage(at: pageIndex)
         pdfDocument.write(to: pdfFileObject.fileURL)
-        collectionView.deleteItems(at: [IndexPath(item: pageIndex, section: 0)])
+        applySnapshot()
     }
 
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -244,11 +246,11 @@ extension PDFEditorViewController {
                 ]),
                 UIAction(title: "Rotate Left", image: UIImage(systemName: "rotate.left")!) { action in
                     self.rotateLeftTapped(pageIndex: indexPath.item)
-                    collectionView.reloadItems(at: [indexPath])
+                    self.applySnapshot()
                 },
                 UIAction(title: "Rotate Right", image: UIImage(systemName: "rotate.right")!) { action in
                     self.rotateRightTapped(pageIndex: indexPath.item)
-                    collectionView.reloadItems(at: [indexPath])
+                    self.applySnapshot()
                 },
                 UIMenu(options: .displayInline, children: [
                     UIAction(title: "Delete", image: UIImage(systemName: "trash")!, attributes: .destructive) { action in
@@ -282,8 +284,7 @@ extension PDFEditorViewController : UIDocumentPickerDelegate {
         if let pdf = PDFDocument(url: url) {
             pdfDocument.appendDocument(pdf)
             pdfDocument.write(to: pdfFileObject.fileURL)
-            let originalPageCount = pdfDocument.pageCount - pdf.pageCount
-            pagesCollectionView.insertItems(at: (originalPageCount..<pdfDocument.pageCount).map { IndexPath(item: $0, section: 0) })
+            applySnapshot()
         } else if let image = UIImage(contentsOfFile: url.path),
             let page = PDFPage(image: image) {
             pdfDocument.insert(page, at: pdfDocument.pageCount)
@@ -306,7 +307,7 @@ extension PDFEditorViewController : PHPickerViewControllerDelegate {
                 DispatchQueue.main.async {
                     pdfDocument.insert(page, at: pdfDocument.pageCount)
                     pdfDocument.write(to: pdfFileObject.fileURL)
-                    self.pagesCollectionView.insertItems(at: [IndexPath(item: pdfDocument.pageCount - 1, section: 0)])
+                    self.applySnapshot()
                 }
             }
         })
@@ -346,14 +347,11 @@ extension PDFEditorViewController : UICollectionViewDragDelegate, UICollectionVi
                 let pageToInsert = item.dragItem.localObject as? PDFPage else {
             return
         }
-        collectionView.performBatchUpdates {
-            self.pdfDocument!.removePage(at: sourceIndexPath.item)
-            self.pdfDocument!.insert(pageToInsert, at: destinationIndexPath.item)
-            self.pdfDocument!.write(to: self.pdfFileObject!.fileURL)
+        self.pdfDocument!.removePage(at: sourceIndexPath.item)
+        self.pdfDocument!.insert(pageToInsert, at: destinationIndexPath.item)
+        self.pdfDocument!.write(to: self.pdfFileObject!.fileURL)
 
-            self.collectionView.deleteItems(at: [sourceIndexPath])
-            self.collectionView.insertItems(at: [destinationIndexPath])
-        }
+        self.applySnapshot()
         coordinator.drop(item.dragItem, toItemAt: destinationIndexPath)
     }
 }
