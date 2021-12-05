@@ -225,30 +225,6 @@ class PDFEditorViewController : UICollectionViewController {
 }
 
 extension PDFEditorViewController {
-    public override func numberOfSections(in collectionView: UICollectionView) -> Int {
-        1
-    }
-
-    public override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        pdfDocument?.pageCount ?? 0
-    }
-
-    public override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        guard let pdfDocument = self.pdfDocument else {
-            fatalError()
-        }
-        
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath) as! PDFPageCell
-        cell.imageView.image = pdfDocument.page(at: indexPath.item)?.thumbnail(of: CGSize(width: 88, height: 88), for: .artBox)
-
-        cell.layer.shadowColor = UIColor.black.cgColor
-        cell.layer.shadowOffset = CGSize(width: 0, height: 2.0)
-        cell.layer.shadowRadius = 2.0
-        cell.layer.shadowOpacity = 0.5
-        cell.layer.masksToBounds = false
-        return cell
-    }
-
     override func collectionView(_ collectionView: UICollectionView, contextMenuConfigurationForItemAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
         guard let pdfDocument = self.pdfDocument else {
             fatalError()
